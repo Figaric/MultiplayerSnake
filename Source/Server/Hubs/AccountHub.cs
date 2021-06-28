@@ -21,7 +21,7 @@ namespace MultiplayerSnake.Server.Hubs
             return base.OnConnectedAsync();
         }
 
-        public async void RequestCreateUser(string username, string password)
+        public async void RequestCreateUser(string username, string password, int color)
         {
             var response = await _mediator.Send(new UserCreateDto(username, password));
 
