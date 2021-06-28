@@ -12,6 +12,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using MultiplayerSnake.Server.Hubs;
 using MediatR;
+using MultiplayerSnake.Server.Behaviours;
 
 namespace MultiplayerSnake.Server
 {
@@ -28,9 +29,9 @@ namespace MultiplayerSnake.Server
         {
             services.AddSignalR();
             services.AddMediatR(typeof(Startup).Assembly);
-
-            services.AddDbContext<ApplicationDbContext>(builder => 
-                builder.UseNpgsql(_configuration.GetConnectionString("DefaultConnection")));
+            services.AddValidators();
+            services.AddTransient<UserManager>();
+            services.AddTransient(typeof(IPipelineBehavior<,>), typeof(ValidationBehaviour<,>));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
