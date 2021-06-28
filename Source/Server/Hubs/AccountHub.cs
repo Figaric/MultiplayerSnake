@@ -21,11 +21,11 @@ namespace MultiplayerSnake.Server.Hubs
             return base.OnConnectedAsync();
         }
 
-        public async void Register(string username, string password)
+        public async void RequestCreateUser(string username, string password)
         {
-            var response = await _mediator.Send(new UserCQRS.UserRequest(username, password));
+            var response = await _mediator.Send(new UserCreateDto(username, password));
 
-            await Clients.Client(Context.ConnectionId).SendAsync("register-response", response.error);
+            await Clients.Client(Context.ConnectionId).SendAsync("ResponseCreateUser", response);
         }
     }
 }
