@@ -1,2 +1,2 @@
 # MultiplayerSnake
-The standart Snake, but with multiplayer
+The standard Snake, but with multiplayer
