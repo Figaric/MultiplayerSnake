@@ -1,29 +1,41 @@
 ﻿using FluentValidation;
+using MultiplayerSnake.Server.Dtos;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
-namespace MultiplayerSnake.Server
+namespace MultiplayerSnake.Server.Validation
 {
-    public class UserValidator : AbstractValidator<UserCreateDto>
+    public class UserRegisterValidator : AbstractValidator<UserRegisterDto>
     {
-        private readonly UserManager _manager;
-
-        public UserValidator(UserManager manager)
+        public UserRegisterValidator()
         {
             RuleFor(u => u.Username)
                 .NotEmpty()
-                .WithMessage("Username is required")
-                .Must(NotDuplicate)
-                .WithMessage("This username is already taken.");
+                .WithMessage("Username is required.")
+                .Must(u => u.Length >= 3)
+                .WithMessage("Username must be at least 3 characters long");
 
             RuleFor(u => u.Password)
                 .NotEmpty()
-                .WithMessage("Password is required");
-
-            _manager = manager;
+                .WithMessage("Password is required.")
+                .Must(u => u.Length >= 3)
+                .WithMessage("Password must be at least 3 characters long");
         }
+    }
 
-        private bool NotDuplicate(string username)
+    public class UserLoginValidator : AbstractValidator<UserLoginDto>
+    {
+        public UserLoginValidator()
         {
-            return _manager.GetUserByName(username) == null;
+            RuleFor(u => u.Username)
+                .NotEmpty()
+                .WithMessage("Username is required.");
+
+            RuleFor(u => u.Password)
+                .NotEmpty()
+                .WithMessage("Password is required.");
         }
     }
 }
