@@ -69,7 +69,6 @@ namespace snake
                 Console.Write("\n");
             }
             Console.WriteLine($"Score: {Score}");
-            Console.WriteLine($"Speed: {Speed}");
         }
 
         public void Update()
