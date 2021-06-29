@@ -5,6 +5,10 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Server", "Server\MultiplayerSnake.Server.csproj", "{9BB1001C-3ABD-47ED-9BE3-EFD1484E463D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "snake", "Client\snake.csproj", "{89669184-C3E6-4965-9396-77144363327C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.ConsoleTest", "ConsoleTest\MultiplayerSnake.ConsoleTest.csproj", "{62B9E4CA-0487-4AD4-9347-598005DB8FF0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,6 +19,14 @@ Global
 		{9BB1001C-3ABD-47ED-9BE3-EFD1484E463D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9BB1001C-3ABD-47ED-9BE3-EFD1484E463D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9BB1001C-3ABD-47ED-9BE3-EFD1484E463D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{89669184-C3E6-4965-9396-77144363327C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{89669184-C3E6-4965-9396-77144363327C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{89669184-C3E6-4965-9396-77144363327C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{89669184-C3E6-4965-9396-77144363327C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62B9E4CA-0487-4AD4-9347-598005DB8FF0}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62B9E4CA-0487-4AD4-9347-598005DB8FF0}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62B9E4CA-0487-4AD4-9347-598005DB8FF0}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62B9E4CA-0487-4AD4-9347-598005DB8FF0}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
