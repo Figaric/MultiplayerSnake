@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Server", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.ConsoleTest", "ConsoleTest\MultiplayerSnake.ConsoleTest.csproj", "{62B9E4CA-0487-4AD4-9347-598005DB8FF0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerSnake.Client", "Client\MultiplayerSnake.Client.csproj", "{89669184-C3E6-4965-9396-77144363327C}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerSnake.FrameworkClient", "Client\MultiplayerSnake.FrameworkClient.csproj", "{89669184-C3E6-4965-9396-77144363327C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MultiplayerSnake.Client", "MultiplayerSnake.Client\MultiplayerSnake.Client.csproj", "{F64C583F-7B96-4496-9158-8721F5C5F623}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{89669184-C3E6-4965-9396-77144363327C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{89669184-C3E6-4965-9396-77144363327C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{89669184-C3E6-4965-9396-77144363327C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F64C583F-7B96-4496-9158-8721F5C5F623}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F64C583F-7B96-4496-9158-8721F5C5F623}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F64C583F-7B96-4496-9158-8721F5C5F623}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F64C583F-7B96-4496-9158-8721F5C5F623}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
