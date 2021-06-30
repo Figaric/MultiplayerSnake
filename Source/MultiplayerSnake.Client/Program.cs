@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiplayerSnake.Client;
+using System;
 using System.Threading;
 
 namespace snake
@@ -6,10 +7,12 @@ namespace snake
     class Program
     {
         public static Snake s = new Snake(20);
+        public static MainMenu menu;
         static void Main(string[] args)
         {
-            Thread upd = new Thread(updTread); upd.Start();
-            Thread kch = new Thread(keyCheck); kch.Start();
+            menu = new MainMenu();
+            //Thread upd = new Thread(updTread); upd.Start();
+            //Thread kch = new Thread(keyCheck); kch.Start();
         }
 
         public static void updTread()
