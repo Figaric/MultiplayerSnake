@@ -5,7 +5,7 @@ VisualStudioVersion = 16.0.31410.357
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Server", "Server\MultiplayerSnake.Server.csproj", "{9BB1001C-3ABD-47ED-9BE3-EFD1484E463D}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Client", "MultiplayerSnake.Client\MultiplayerSnake.Client.csproj", "{F64C583F-7B96-4496-9158-8721F5C5F623}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Client", "Client\MultiplayerSnake.Client.csproj", "{F64C583F-7B96-4496-9158-8721F5C5F623}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
