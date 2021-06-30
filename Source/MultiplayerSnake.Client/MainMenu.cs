@@ -8,8 +8,16 @@ namespace MultiplayerSnake.Client
 {
     class MainMenu
     {
-        public string userinput { get; set; }
+        public int userinput { get; set; }
         public MainMenu()
+        {
+            while (userinput != 1)
+            {
+                DrawMainMenu();
+            }
+        }
+
+        public void DrawMainMenu()
         {
             Console.Clear();
             Console.WriteLine("\n\t\tWelcome to the");
@@ -21,11 +29,30 @@ namespace MultiplayerSnake.Client
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("\t3) Аккаунты (Under Constraction)");
             Console.ForegroundColor = ConsoleColor.Magenta;
-            Console.WriteLine("\t4) ВЗЯТЬ КРЕДИТ В АЛЬФАБАНКЕ ПОД 9.9% ГОДОВЫХ");
+            Console.WriteLine("\t4) Помощь");
             Console.ResetColor();
             Console.Write("\nВыберите одну из опций выше: ");
-            userinput = Console.ReadLine();
-
+            try
+            {
+                userinput = int.Parse(Console.ReadLine());
+            }
+            catch (System.FormatException)
+            {
+                Console.WriteLine("Это даже не число, олень ты ёбанный");
+                Console.ReadKey();
+            }
+            switch (userinput)
+            {
+                case 4:
+                    Console.Clear();
+                    Console.WriteLine("\n\t\tУправление -  wasd / стрелочки");
+                    Console.WriteLine("\t\tВыход во время игры - Q");
+                    Console.WriteLine("\n\t\tНазад - любая клавиша");
+                    Console.ReadKey();
+                    break;
+                default:
+                    break;
+            }
         }
     }
 }
