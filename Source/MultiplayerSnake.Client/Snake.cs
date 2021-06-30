@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiplayerSnake.Client;
+using System;
 using System.Collections.Generic;
 
 namespace snake
@@ -32,6 +33,7 @@ namespace snake
         public int Score { get; set; }
         public int iterCount { get; set; }
         public Random rnd { get; set; }
+        public MainMenu Menu { get; set; }
         #endregion
 
         #region Constructor
@@ -103,16 +105,48 @@ namespace snake
                 default:
                     break;
             }
+            for (int i = 0; i < sParts.Count - 1; i++) // Checking snake's self collision
+            {
+                switch (Direction)
+                {
+                    case 0:
+                        if (sParts[0].y + 1 == sParts[i].y)
+                        {
+                            GameOver();
+                        }
+                        break;
+                    case 1:
+                        if (sParts[0].x + 1 == sParts[i].x)
+                        {
+                            GameOver();
+                        }
+                        break;
+                    case 2:
+                        if (sParts[0].y - 1 == sParts[i].y)
+                        {
+                            GameOver();
+                        }
+                        break;
+                    case 3:
+                        if (sParts[0].x - 1 == sParts[i].x)
+                        {
+                            GameOver();
+                        }
+                        break;
+                    default:
+                        break;
+                }
+
+            }
             mapConstruct();
             if (sParts[0].x == mapSize || sParts[0].y == mapSize || sParts[0].x == 0 || sParts[0].y == 0) // Checking if the player is out of bounds
             {
-                Console.WriteLine("GameOver");
-                Console.Read();
+                GameOver();
             }
             iterCount++;
-            if (iterCount % mapSize*Speed == 0 && Speed < 50)
+            if (iterCount % mapSize * Speed == 0 && Speed < 50) // Speeding up the game
             {
-                Speed=Math.Round(Speed*1.1, 2);
+                Speed = Math.Round(Speed * 1.1, 2);
             }
             generateFood();
             Draw();
@@ -177,6 +211,13 @@ namespace snake
                 default:
                     break;
             }
+        }
+        private void GameOver()
+        {
+            Console.WriteLine("GameOver");
+            Console.WriteLine("Нажмите на любую кнопку чтобы выйти в главное меню");
+            Console.ReadKey();
+            Menu = new MainMenu();
         }
         #endregion
     }
