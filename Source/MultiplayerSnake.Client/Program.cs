@@ -11,15 +11,19 @@ namespace snake
         static void Main(string[] args)
         {
             menu = new MainMenu();
-            //Thread upd = new Thread(updTread); upd.Start();
-            //Thread kch = new Thread(keyCheck); kch.Start();
+            if (menu.userinput == 1)
+            {
+                s = new Snake(20);
+                Thread upd = new Thread(updTread); upd.Start();
+                Thread kch = new Thread(keyCheck); kch.Start();
+            }
         }
 
         public static void updTread()
         {
             while (true)
             {
-                Thread.Sleep((int)(500/s.Speed));
+                Thread.Sleep((int)(500 / s.Speed));
                 s.Update();
             }
         }
