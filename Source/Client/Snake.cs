@@ -34,6 +34,7 @@ namespace snake
         public int iterCount { get; set; }
         public Random rnd { get; set; }
         public MainMenu Menu { get; set; }
+        public bool IsAlive { get; set; }
         #endregion
 
         #region Constructor
@@ -55,6 +56,7 @@ namespace snake
             Score = 0;
             Speed = 1;
             rnd = new Random();
+            IsAlive = true;
         }
         #endregion
 
@@ -75,81 +77,88 @@ namespace snake
 
         public void Update()
         {
-            Point lCoords = sParts[0];
-            switch (Direction)
+            if (IsAlive)
             {
-                case 0:
-                    sParts.Remove(sParts[sParts.Count - 1]);
-                    sParts.Reverse();
-                    sParts.Add(new Point(lCoords.x + 1, lCoords.y));
-                    sParts.Reverse();
-                    break;
-                case 1:
-                    sParts.Remove(sParts[sParts.Count - 1]);
-                    sParts.Reverse();
-                    sParts.Add(new Point(lCoords.x, lCoords.y + 1));
-                    sParts.Reverse();
-                    break;
-                case 2:
-                    sParts.Remove(sParts[sParts.Count - 1]);
-                    sParts.Reverse();
-                    sParts.Add(new Point(lCoords.x - 1, lCoords.y));
-                    sParts.Reverse();
-                    break;
-                case 3:
-                    sParts.Remove(sParts[sParts.Count - 1]);
-                    sParts.Reverse();
-                    sParts.Add(new Point(lCoords.x, lCoords.y - 1));
-                    sParts.Reverse();
-                    break;
-                default:
-                    break;
-            }
-            for (int i = 0; i < sParts.Count - 1; i++) // Checking snake's self collision
-            {
+                //for (int i = 0; i < sParts.Count - 1; i++) // Checking snake's self collision
+                //{
+                //    switch (Direction)
+                //    {
+                //        case 0:
+                //            if (sParts[0].x + 1 == sParts[i].x)
+                //            {
+                //                GameOver();
+                //            }
+                //            break;
+                //        case 1:
+                //            if (sParts[0].y + 1 == sParts[i].y)
+                //            {
+                //                GameOver();
+                //            }
+                //            break;
+                //        case 2:
+                //            if (sParts[0].x - 1 == sParts[i].x)
+                //            {
+                //                GameOver();
+                //            }
+                //            break;
+                //        case 3:
+                //            if (sParts[0].y - 1 == sParts[i].y)
+                //            {
+                //                GameOver();
+                //            }
+                //            break;
+                //        default:
+                //            break;
+                //    }
+
+                //}
+                Point lCoords = sParts[0];
                 switch (Direction)
                 {
                     case 0:
-                        if (sParts[0].y + 1 == sParts[i].y)
-                        {
-                            GameOver();
-                        }
+                        sParts.Remove(sParts[sParts.Count - 1]);
+                        sParts.Reverse();
+                        sParts.Add(new Point(lCoords.x + 1, lCoords.y));
+                        sParts.Reverse();
                         break;
                     case 1:
-                        if (sParts[0].x + 1 == sParts[i].x)
-                        {
-                            GameOver();
-                        }
+                        sParts.Remove(sParts[sParts.Count - 1]);
+                        sParts.Reverse();
+                        sParts.Add(new Point(lCoords.x, lCoords.y + 1));
+                        sParts.Reverse();
                         break;
                     case 2:
-                        if (sParts[0].y - 1 == sParts[i].y)
-                        {
-                            GameOver();
-                        }
+                        sParts.Remove(sParts[sParts.Count - 1]);
+                        sParts.Reverse();
+                        sParts.Add(new Point(lCoords.x - 1, lCoords.y));
+                        sParts.Reverse();
                         break;
                     case 3:
-                        if (sParts[0].x - 1 == sParts[i].x)
-                        {
-                            GameOver();
-                        }
+                        sParts.Remove(sParts[sParts.Count - 1]);
+                        sParts.Reverse();
+                        sParts.Add(new Point(lCoords.x, lCoords.y - 1));
+                        sParts.Reverse();
                         break;
                     default:
                         break;
                 }
+                mapConstruct();
+                iterCount++;
+                if (iterCount % mapSize * Speed == 0 && Speed < 50) // Speeding up the game
+                {
+                    Speed = Math.Round(Speed * 1.1, 2);
+                }
+                generateFood();
+                Draw();
+                if (sParts[0].x == mapSize || sParts[0].y == mapSize || sParts[0].x == 0 || sParts[0].y == 0) // Checking if the player is out of bounds
+                {
+                    GameOver();
+                }
+            }
+            else
+            {
 
             }
-            mapConstruct();
-            if (sParts[0].x == mapSize || sParts[0].y == mapSize || sParts[0].x == 0 || sParts[0].y == 0) // Checking if the player is out of bounds
-            {
-                GameOver();
-            }
-            iterCount++;
-            if (iterCount % mapSize * Speed == 0 && Speed < 50) // Speeding up the game
-            {
-                Speed = Math.Round(Speed * 1.1, 2);
-            }
-            generateFood();
-            Draw();
         }
 
         private void generateFood()
@@ -214,10 +223,10 @@ namespace snake
         }
         private void GameOver()
         {
+            IsAlive = false;
             Console.WriteLine("GameOver");
             Console.WriteLine("Нажмите на любую кнопку чтобы выйти в главное меню");
-            Console.ReadKey();
-            Menu = new MainMenu();
+            //Menu = new MainMenu();
         }
         #endregion
     }
