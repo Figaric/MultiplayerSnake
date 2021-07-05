@@ -1,13 +1,8 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MultiplayerSnake.Server.Responses;
-using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
-using System;
-using MultiplayerSnake.Server.Dtos;
-using System.Linq;
 
 namespace MultiplayerSnake.Server
 {

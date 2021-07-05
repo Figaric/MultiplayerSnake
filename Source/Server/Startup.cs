@@ -13,8 +13,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Microsoft.OpenApi.Models;
-using MultiplayerSnake.Server.Behaviours;
-using MultiplayerSnake.Server.Validation;
 
 namespace MultiplayerSnake.Server
 {
@@ -32,7 +30,7 @@ namespace MultiplayerSnake.Server
         {
             services.AddMediatR(typeof(Startup).Assembly);
 
-            services.AddDbContext<ApplicationDbContext>(builder => 
+            services.AddDbContext<ApplicationDbContext>(builder =>
                 builder.UseNpgsql(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddSingleton<JwtManager>();
@@ -49,7 +47,7 @@ namespace MultiplayerSnake.Server
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env, JwtManager jwt)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {

@@ -1,8 +1,7 @@
-﻿using FluentValidation.Results;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net;
 
-namespace MultiplayerSnake.Server.Responses
+namespace MultiplayerSnake.Server
 {
     public record ResponseBase
     {

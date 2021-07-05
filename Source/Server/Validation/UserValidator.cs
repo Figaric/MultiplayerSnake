@@ -1,11 +1,6 @@
 ﻿using FluentValidation;
-using MultiplayerSnake.Server.Dtos;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
-namespace MultiplayerSnake.Server.Validation
+namespace MultiplayerSnake.Server
 {
     public class UserRegisterValidator : AbstractValidator<UserRegisterDto>
     {

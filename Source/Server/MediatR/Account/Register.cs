@@ -1,16 +1,10 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
-using MultiplayerSnake.Server.Dtos;
-using MultiplayerSnake.Server.Entities;
-using MultiplayerSnake.Server.Responses;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace MultiplayerSnake.Server.MediatR.Account
+namespace MultiplayerSnake.Server
 {
     public static class Register
     {
@@ -25,6 +19,8 @@ namespace MultiplayerSnake.Server.MediatR.Account
 
             public async Task<ResponseBase> Handle(UserRegisterDto request, CancellationToken cancellationToken)
             {
+                // Validation stuff is in the Validation/UserValidator.cs
+
                 string hashedPassword = Argon2.Hash(request.Password);
 
                 var user = new User
@@ -38,9 +34,10 @@ namespace MultiplayerSnake.Server.MediatR.Account
                 try
                 {
                     await _context.SaveChangesAsync();
-                } catch
+                }
+                catch
                 {
-                    if(await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username) != null)
+                    if (await _context.Users.FirstOrDefaultAsync(u => u.Username == request.Username) != null)
                     {
                         return ResponseBase.Failed(new FieldError
                         {

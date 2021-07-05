@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using MultiplayerSnake.Server.Entities;
 
 namespace MultiplayerSnake.Server
 {

@@ -1,6 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Filters;
-using MultiplayerSnake.Server.Responses;
 using System.Net;
 
 namespace MultiplayerSnake.Server
