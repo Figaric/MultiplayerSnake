@@ -1,10 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using System;
 using System.IdentityModel.Tokens.Jwt;
-using System.Linq;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
 
 namespace MultiplayerSnake.Server
 {
@@ -17,40 +16,74 @@ namespace MultiplayerSnake.Server
             _configuration = configuration;
         }
 
-        public int GetPayload(string accessToken)
+        /// <summary>
+        /// Validated <paramref name="accessToken"/>
+        /// </summary>
+        /// <param name="accessToken"></param>
+        /// <returns>If the tokens signature is valid, returns userId, otherwise returns 0</returns>
+        public int GetAccessTokenPayload(string accessToken)
         {
-            var handler = new JwtSecurityTokenHandler();
-            var jsonToken = handler.ReadToken(accessToken);
-            var tokenS = jsonToken as JwtSecurityToken;
+            var validationParameters = new TokenValidationParameters
+            {
+                // Validate issuer
+                ValidateIssuer = true,
+                // Validate audience
+                ValidateAudience = true,
+                // Validate expiration
+                ValidateLifetime = true,
+                // Validate signature
+                ValidateIssuerSigningKey = true,
+                // Set issuer
+                ValidIssuer = _configuration["Jwt:Issuer"],
+                // Set audience
+                ValidAudience = _configuration["Jwt:Audience"],
 
-            int userId = int.Parse(tokenS.Claims.First(c => c.Type == ClaimTypes.NameIdentifier).Value);
+                // Set signing key
+                IssuerSigningKey = new SymmetricSecurityKey(
+                    // Get our secret key from configuration
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"])),
+            };
+
+            ClaimsPrincipal payload;
+
+            try
+            {
+                payload = new JwtSecurityTokenHandler().ValidateToken(accessToken, validationParameters, out SecurityToken validatedToken);
+            } 
+            catch(SecurityTokenException)
+            {
+                return 0;
+            }
+
+            int userId = int.Parse(payload.FindFirstValue(ClaimTypes.NameIdentifier));
 
             return userId;
         }
 
         public string CreateAccessToken(int userId)
         {
-            var symmetricKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(_configuration["AccessTokenSecret"]));
-            var tokenHandler = new JwtSecurityTokenHandler();
-
-            var claims = new ClaimsIdentity(new Claim[]
+            var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userId.ToString()),
-            });
-
-            var tokenDescriptor = new SecurityTokenDescriptor
-            {
-                Subject = claims,
-                Expires = System.DateTime.UtcNow.AddDays(7),
-                SigningCredentials = new SigningCredentials(
-                    symmetricKey,
-                    SecurityAlgorithms.HmacSha256Signature)
             };
 
-            var stoken = tokenHandler.CreateToken(tokenDescriptor);
-            var token = tokenHandler.WriteToken(stoken);
+            // Create the credentials used to generate the token
+            var credentials = new SigningCredentials(
+                // Get the secret key from configuration
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:AccessTokenSecret"])),
+                // Use HS256 algorithm
+                SecurityAlgorithms.HmacSha256);
 
-            return token;
+            // Generate the Jwt Token
+            var token = new JwtSecurityToken(
+                issuer: _configuration["Jwt:Issuer"],
+                audience: _configuration["Jwt:Audience"],
+                claims: claims,
+                signingCredentials: credentials,
+                // Expire if not used for 3 months
+                expires: DateTime.Now.AddDays(14));
+
+            return new JwtSecurityTokenHandler().WriteToken(token);
         }
     }
 }
