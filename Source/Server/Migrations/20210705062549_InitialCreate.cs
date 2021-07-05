@@ -14,7 +14,8 @@ namespace MultiplayerSnake.Server.Migrations
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
                     Username = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false)
+                    Password = table.Column<string>(type: "text", nullable: false),
+                    Color = table.Column<int>(type: "integer", nullable: false)
                 },
                 constraints: table =>
                 {
