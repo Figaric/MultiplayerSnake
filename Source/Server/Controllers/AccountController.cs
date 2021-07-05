@@ -1,13 +1,14 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using MultiplayerSnake.Server.Dtos;
-using MultiplayerSnake.Server.MediatR.Account;
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MultiplayerSnake.Server
 {
     [ApiController]
-    [Route("/account")]
+    [Route("api/account")]
     public class AccountController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -17,18 +18,18 @@ namespace MultiplayerSnake.Server
             _mediator = mediator;
         }
 
-        [HttpPost("/register")]
-        public async Task<IActionResult> Register(UserRegisterDto registerDto)
+        [HttpPost(ApiRoutes.Register)]
+        public async Task<IActionResult> RegisterAsync(UserRegisterDto registerDto)
         {
-            var response = await _mediator.Send(registerDto);
+            ResponseBase response = await _mediator.Send(registerDto);
 
             return Created(HttpContext.Request.Path, response);
         }
 
-        [HttpPost("/login")]
-        public async Task<IActionResult> Login(UserLoginDto loginDto)
+        [HttpPost(ApiRoutes.Login)]
+        public async Task<IActionResult> LoginAsync(UserLoginDto loginDto)
         {
-            var response = await _mediator.Send(loginDto);
+            ResponseBase response = await _mediator.Send(loginDto);
 
             return Ok(response);
         }
