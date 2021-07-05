@@ -8,15 +8,14 @@ namespace MultiplayerSnake.Server
     {
         public int Id { get; set; }
 
-        [Required]
         [StringLength(255)]
+        [Required]
         public string Username { get; set; }
 
         [Required]
-        [StringLength(255)]
         public string Password { get; set; }
 
-        [Range(1 , 14)]
+        [Range(1, 14)]
         public int Color { get; set; }
     }
 }
