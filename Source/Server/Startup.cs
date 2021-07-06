@@ -28,6 +28,9 @@ namespace MultiplayerSnake.Server
             services.AddSingleton<JwtManager>();
             services.AddValidators();
 
+            services.AddAutoMapper(cfg => 
+                cfg.AddProfile<UserProfile>());
+
             services.AddControllers(cfg => cfg.Filters.Add<ResponseMappingFilter>());
             services.AddControllers();
             services.AddSwaggerGen(c =>
