@@ -9,7 +9,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace MultiplayerSnake.Server.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210705062549_InitialCreate")]
+    [Migration("20210706173103_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
