@@ -41,7 +41,7 @@ namespace MultiplayerSnake.Server
                 // Set signing key
                 IssuerSigningKey = new SymmetricSecurityKey(
                     // Get our secret key from configuration
-                    Encoding.UTF8.GetBytes(_configuration["Jwt:SecretKey"])),
+                    Encoding.UTF8.GetBytes(_configuration["Jwt:AccessTokenSecret"])),
             };
 
             ClaimsPrincipal payload;
