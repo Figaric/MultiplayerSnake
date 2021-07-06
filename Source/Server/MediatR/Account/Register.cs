@@ -47,7 +47,7 @@ namespace MultiplayerSnake.Server
                     }
                 }
 
-                return ResponseBase.Succeed;
+                return ResponseBase.Succeed(System.Net.HttpStatusCode.Created);
             }
         }
     }

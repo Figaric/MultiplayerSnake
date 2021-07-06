@@ -1,6 +1,7 @@
 ﻿using Isopoh.Cryptography.Argon2;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
+using System.Net;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +26,7 @@ namespace MultiplayerSnake.Server
 
                 if (user == null)
                 {
-                    return ResponseBase.Failed(new FieldError
+                    return ResponseBase.Failed(HttpStatusCode.Forbidden, new FieldError
                     {
                         Field = nameof(request.Username),
                         Message = "User with this username doesn't exist."
@@ -34,7 +35,7 @@ namespace MultiplayerSnake.Server
 
                 if (!Argon2.Verify(user.Password, request.Password))
                 {
-                    return ResponseBase.Failed(new FieldError
+                    return ResponseBase.Failed(HttpStatusCode.Forbidden, new FieldError
                     {
                         Field = nameof(request.Password),
                         Message = "Incorrect password."
