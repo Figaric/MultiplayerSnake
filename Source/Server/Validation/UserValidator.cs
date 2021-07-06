@@ -17,6 +17,12 @@ namespace MultiplayerSnake.Server
                 .WithMessage("Password is required.")
                 .Must(u => u.Length >= 3)
                 .WithMessage("Password must be at least 3 characters long");
+
+            RuleFor(u => u.Color)
+                .GreaterThanOrEqualTo(1)
+                .WithMessage("Color must be greater or equal to 1")
+                .LessThanOrEqualTo(14)
+                .WithMessage("Color must be less or equal to 14");
         }
     }
 
