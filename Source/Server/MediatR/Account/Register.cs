@@ -1,4 +1,5 @@
-﻿using Isopoh.Cryptography.Argon2;
+﻿using AutoMapper;
+using Isopoh.Cryptography.Argon2;
 using MediatR;
 using Microsoft.EntityFrameworkCore;
 using System.Threading;
@@ -11,10 +12,12 @@ namespace MultiplayerSnake.Server
         public class Handler : IRequestHandler<UserRegisterDto, ResponseBase>
         {
             private readonly ApplicationDbContext _context;
+            private readonly IMapper _mapper;
 
-            public Handler(ApplicationDbContext context)
+            public Handler(ApplicationDbContext context, IMapper mapper)
             {
                 _context = context;
+                _mapper = mapper;
             }
 
             public async Task<ResponseBase> Handle(UserRegisterDto request, CancellationToken cancellationToken)
@@ -23,11 +26,8 @@ namespace MultiplayerSnake.Server
 
                 string hashedPassword = Argon2.Hash(request.Password);
 
-                var user = new User
-                {
-                    Username = request.Username,
-                    Password = hashedPassword
-                };
+                User user = _mapper.Map<User>(request);
+                user.Password = hashedPassword;
 
                 await _context.Users.AddAsync(user);
 
