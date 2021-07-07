@@ -11,9 +11,10 @@ namespace MultiplayerSnake.Client
         public Thread upd;
         public Thread kch;
         public bool isAlive = false;
+        public bool Logedin = false;
         public MainMenu()
         {
-            upd = new Thread(updTread); upd.Start();
+            upd = new Thread(updThread); upd.Start();
             kch = new Thread(keyCheck); kch.Start();
             while (true)
             {
@@ -43,12 +44,44 @@ namespace MultiplayerSnake.Client
                     switch (userinput = int.Parse(Console.ReadLine()))
                     {
                         case 1:
-                            if (true)
-                            {
-
-                            }
                             s = new Snake(20);
                             isAlive = true;
+                            break;
+                        case 2:
+
+                            break;
+                        case 3:
+                            Console.Clear();
+                            if (!Logedin)
+                            {
+                                Console.WriteLine("\n\t\t1) Зарегистрироваться");
+                                Console.WriteLine("\t\t2) Войти");
+                                Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                switch (Console.ReadKey(false).Key)
+                                {
+                                    case ConsoleKey.D1:
+                                        Console.Clear();
+                                        Console.WriteLine("\n\t\t\tReg");
+                                        Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                        //registration
+                                        break;
+                                    case ConsoleKey.D2:
+                                        Console.Clear();
+                                        Console.WriteLine("\n\t\t\tLog-in");
+                                        Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                        //log-in
+                                        break;
+                                    default:
+                                        break;
+                                }
+                            }
+                            else
+                            {
+                                Console.WriteLine("\n\t\t1) Настройки");
+                                Console.WriteLine("\t\t2) Статистика");
+                                Console.WriteLine("\n\t\tНазад - любая клавиша");
+                            }
+                            Console.ReadKey(false);
                             break;
                         case 4:
                             Console.Clear();
@@ -69,7 +102,7 @@ namespace MultiplayerSnake.Client
                 }
             }
         }
-        public void updTread()
+        public void updThread()
         {
             while (true)
             {
@@ -77,7 +110,6 @@ namespace MultiplayerSnake.Client
                 {
                     Thread.Sleep((int)(500 / s.Speed));
                     s.Update();
-                    isAlive = s.IsAlive;
                 }
             }
         }
@@ -93,23 +125,22 @@ namespace MultiplayerSnake.Client
                     {
                         s.Direction = 3;
                     }
-                    if (keyInfo.Key == ConsoleKey.D && s.Direction != 3 || keyInfo.Key == ConsoleKey.RightArrow && s.Direction != 3)
+                    else if (keyInfo.Key == ConsoleKey.D && s.Direction != 3 || keyInfo.Key == ConsoleKey.RightArrow && s.Direction != 3)
                     {
                         s.Direction = 1;
                     }
-                    if (keyInfo.Key == ConsoleKey.W && s.Direction != 0 || keyInfo.Key == ConsoleKey.UpArrow && s.Direction != 0)
+                    else if (keyInfo.Key == ConsoleKey.W && s.Direction != 0 || keyInfo.Key == ConsoleKey.UpArrow && s.Direction != 0)
                     {
                         s.Direction = 2;
                     }
-                    if (keyInfo.Key == ConsoleKey.S && s.Direction != 2 || keyInfo.Key == ConsoleKey.DownArrow && s.Direction != 2)
+                    else if (keyInfo.Key == ConsoleKey.S && s.Direction != 2 || keyInfo.Key == ConsoleKey.DownArrow && s.Direction != 2)
                     {
                         s.Direction = 0;
                     }
-                    if (keyInfo.Key == ConsoleKey.Q)
+                    else if (keyInfo.Key == ConsoleKey.Q)
                     {
-                        s.IsAlive = false;
-                        isAlive = false;
-                        DrawMainMenu();
+                        s.GameOver();
+                        isAlive = s.IsAlive;
                     }
                 }
             }

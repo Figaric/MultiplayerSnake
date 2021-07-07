@@ -33,8 +33,9 @@ namespace snake
         public int Score { get; set; }
         public int iterCount { get; set; }
         public Random rnd { get; set; }
-        public MainMenu Menu { get; set; }
         public bool IsAlive { get; set; }
+        public ConsoleColor Color { get; set; }
+        public MainMenu Menu { get; set; }
         #endregion
 
         #region Constructor
@@ -79,39 +80,6 @@ namespace snake
         {
             if (IsAlive)
             {
-                //for (int i = 0; i < sParts.Count - 1; i++) // Checking snake's self collision
-                //{
-                //    switch (Direction)
-                //    {
-                //        case 0:
-                //            if (sParts[0].x + 1 == sParts[i].x)
-                //            {
-                //                GameOver();
-                //            }
-                //            break;
-                //        case 1:
-                //            if (sParts[0].y + 1 == sParts[i].y)
-                //            {
-                //                GameOver();
-                //            }
-                //            break;
-                //        case 2:
-                //            if (sParts[0].x - 1 == sParts[i].x)
-                //            {
-                //                GameOver();
-                //            }
-                //            break;
-                //        case 3:
-                //            if (sParts[0].y - 1 == sParts[i].y)
-                //            {
-                //                GameOver();
-                //            }
-                //            break;
-                //        default:
-                //            break;
-                //    }
-
-                //}
                 Point lCoords = sParts[0];
                 switch (Direction)
                 {
@@ -221,12 +189,11 @@ namespace snake
                     break;
             }
         }
-        private void GameOver()
+        public void GameOver()
         {
             IsAlive = false;
             Console.WriteLine("GameOver");
-            Console.WriteLine("Нажмите на любую кнопку чтобы выйти в главное меню");
-            //Menu = new MainMenu();
+            Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
         }
         #endregion
     }
