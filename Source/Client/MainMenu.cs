@@ -48,7 +48,13 @@ namespace MultiplayerSnake.Client
                             isAlive = true;
                             break;
                         case 2:
-
+                            if (!Logedin)
+                            {
+                                Console.WriteLine("\n\t\tНеобходимо зарегистрировать аккаунт!");
+                                Console.WriteLine("\t\tСделать это можно во вкладке \"Аккаунты\"");
+                                Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                Console.ReadKey(false);
+                            }
                             break;
                         case 3:
                             Console.Clear();
@@ -63,12 +69,14 @@ namespace MultiplayerSnake.Client
                                         Console.Clear();
                                         Console.WriteLine("\n\t\t\tReg");
                                         Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                        Console.ReadKey(false);
                                         //registration
                                         break;
                                     case ConsoleKey.D2:
                                         Console.Clear();
                                         Console.WriteLine("\n\t\t\tLog-in");
                                         Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                        Console.ReadKey(false);
                                         //log-in
                                         break;
                                     default:
@@ -80,15 +88,15 @@ namespace MultiplayerSnake.Client
                                 Console.WriteLine("\n\t\t1) Настройки");
                                 Console.WriteLine("\t\t2) Статистика");
                                 Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                Console.ReadKey(false);
                             }
-                            Console.ReadKey(false);
                             break;
                         case 4:
                             Console.Clear();
                             Console.WriteLine("\n\t\tУправление -  wasd / стрелочки");
                             Console.WriteLine("\t\tВыход во время игры - Q");
                             Console.WriteLine("\n\t\tНазад - любая клавиша");
-                            Console.ReadKey();
+                            Console.ReadKey(false);
                             break;
                         default:
                             break;
