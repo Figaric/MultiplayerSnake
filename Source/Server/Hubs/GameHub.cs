@@ -69,7 +69,7 @@ namespace MultiplayerSnake.Server.Hubs
                     Message = "Could not find player with id " + Context.ConnectionId
                 });
 
-                await Clients.Caller.SendAsync(GameHubResponses.ResponseJoinRoom, response);
+                await Clients.Caller.SendAsync(GameHubResponses.ResponsePassPositionInfo, response);
                 return;
             }
 
