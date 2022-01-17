@@ -65,7 +65,7 @@ namespace snake
         public void Draw()
         {
             Console.Clear();
-            for (int i = 0; i < mapSize + 1; i++) // Simple 2D array display
+            for (int i = 0; i < mapSize + 1; i++) //  Ingame ui
             {
                 for (int j = 0; j < mapSize + 1; j++)
                 {
@@ -80,28 +80,28 @@ namespace snake
         {
             if (IsAlive)
             {
-                Point lCoords = sParts[0];
-                switch (Direction)
+                Point lCoords = sParts[0]; // Saves coords of the first snake's chunk
+                switch (Direction) // Moving snake's chunks     PS. Idk what the fuck i just did but it works, so DON'T TOUCH
                 {
-                    case 0:
+                    case 0: // Up
                         sParts.Remove(sParts[sParts.Count - 1]);
                         sParts.Reverse();
                         sParts.Add(new Point(lCoords.x + 1, lCoords.y));
                         sParts.Reverse();
                         break;
-                    case 1:
+                    case 1: // Right
                         sParts.Remove(sParts[sParts.Count - 1]);
                         sParts.Reverse();
                         sParts.Add(new Point(lCoords.x, lCoords.y + 1));
                         sParts.Reverse();
                         break;
-                    case 2:
+                    case 2: // Down
                         sParts.Remove(sParts[sParts.Count - 1]);
                         sParts.Reverse();
                         sParts.Add(new Point(lCoords.x - 1, lCoords.y));
                         sParts.Reverse();
                         break;
-                    case 3:
+                    case 3: // Left
                         sParts.Remove(sParts[sParts.Count - 1]);
                         sParts.Reverse();
                         sParts.Add(new Point(lCoords.x, lCoords.y - 1));
@@ -123,15 +123,11 @@ namespace snake
                     GameOver();
                 }
             }
-            else
-            {
-
-            }
         }
 
         private void generateFood()
         {
-            if (iterCount % mapSize == 0 || foodCoords.Count == 0)
+            if (iterCount % mapSize == 0 || foodCoords.Count == 0) // If it's time to spawn food or there is no food on the map
             {
                 foodCoords.Add(new Point(rnd.Next(1, mapSize), rnd.Next(1, mapSize)));
             }
@@ -142,7 +138,7 @@ namespace snake
             {
                 for (int j = 1; j < mapSize; j++)
                 {
-                    Map[i, j] = ' ';
+                    Map[i, j] = ' '; // Everything exept bounds is void now
                     foreach (var part in sParts) // Map construction based on the position of the snake parts
                     {
                         foreach (var food in foodCoords)
@@ -151,16 +147,16 @@ namespace snake
                             {
                                 Map[i, j] = '+';
                             }
-                            if (food.x == part.x && food.y == part.y)
+                            if (food.x == part.x && food.y == part.y) // If snake eats food
                             {
-                                foodCoords.Remove(food);
-                                Map[food.x, food.y] = '*';
+                                foodCoords.Remove(food); 
+                                Map[food.x, food.y] = '*'; // Render snake's chunk at food coords
                                 snakeGrowth();
                                 Score++;
                                 return;
                             }
                         }
-                        if (i == part.x && j == part.y)
+                        if (i == part.x && j == part.y) // Render snake chunks
                         {
                             Map[i, j] = '*';
                         }
@@ -169,7 +165,7 @@ namespace snake
             }
         }
 
-        private void snakeGrowth()
+        private void snakeGrowth() // Adding a new chunk at the end of snake
         {
             switch (Direction)
             {
