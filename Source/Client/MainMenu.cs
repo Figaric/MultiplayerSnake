@@ -106,7 +106,7 @@ namespace MultiplayerSnake.Client
                 }
                 catch (System.FormatException)
                 {
-                    Console.WriteLine("Это даже не число, олень ты ёбанный");
+                    Console.WriteLine("Это даже не число, олень ты e#@!ный");
                     Console.ReadKey();
                 }
             }
