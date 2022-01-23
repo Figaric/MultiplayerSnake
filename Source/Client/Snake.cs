@@ -122,6 +122,7 @@ namespace snake
                 {
                     GameOver();
                 }
+                SelfCollideCheck();
             }
         }
 
@@ -190,6 +191,16 @@ namespace snake
             IsAlive = false;
             Console.WriteLine("GameOver");
             Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
+        }
+        public void SelfCollideCheck()
+        {
+            Point forepart = sParts[0];
+            List<Point> temp = new List<Point>(sParts);
+            temp.RemoveAt(0);
+            if (temp.Contains(forepart))
+            {
+                GameOver();
+            }
         }
         #endregion
     }
