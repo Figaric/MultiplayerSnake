@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading;
 
-namespace snake;
+namespace MultiplayerSnake.Client;
 
 class MainMenu
 {

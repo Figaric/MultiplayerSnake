@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace snake;
+namespace MultiplayerSnake.Client;
 struct Point
 {
 

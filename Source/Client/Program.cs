@@ -1,4 +1,4 @@
-﻿namespace snake;
+﻿namespace MultiplayerSnake.Client;
 
 class Program
 {
