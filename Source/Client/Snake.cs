@@ -5,8 +5,11 @@ namespace snake;
 struct Point
 {
 
-    public int x;
-    public int y;
+    private int x;
+    private int y;
+
+    public int X { get => x; set => x = value; }
+    public int Y { get => y; set => y = value; }
 
     public Point(int x, int y)
     {
@@ -15,7 +18,7 @@ struct Point
     }
     public override string ToString()
     {
-        return $"{x} : {y}";
+        return $"{X} : {Y}";
     }
 }
 
@@ -92,25 +95,25 @@ class Snake
                 case 0: // Up
                     SParts.Remove(SParts[SParts.Count - 1]);
                     SParts.Reverse();
-                    SParts.Add(new Point(lCoords.x + 1, lCoords.y));
+                    SParts.Add(new Point(lCoords.X + 1, lCoords.Y));
                     SParts.Reverse();
                     break;
                 case 1: // Right
                     SParts.Remove(SParts[SParts.Count - 1]);
                     SParts.Reverse();
-                    SParts.Add(new Point(lCoords.x, lCoords.y + 1));
+                    SParts.Add(new Point(lCoords.X, lCoords.Y + 1));
                     SParts.Reverse();
                     break;
                 case 2: // Down
                     SParts.Remove(SParts[SParts.Count - 1]);
                     SParts.Reverse();
-                    SParts.Add(new Point(lCoords.x - 1, lCoords.y));
+                    SParts.Add(new Point(lCoords.X - 1, lCoords.Y));
                     SParts.Reverse();
                     break;
                 case 3: // Left
                     SParts.Remove(SParts[SParts.Count - 1]);
                     SParts.Reverse();
-                    SParts.Add(new Point(lCoords.x, lCoords.y - 1));
+                    SParts.Add(new Point(lCoords.X, lCoords.Y - 1));
                     SParts.Reverse();
                     break;
                 default:
@@ -124,7 +127,7 @@ class Snake
             }
             GenerateFood();
             Draw();
-            if (SParts[0].x == MapSize || SParts[0].y == MapSize || SParts[0].x == 0 || SParts[0].y == 0) // Checking if the player is out of bounds
+            if (SParts[0].X == MapSize || SParts[0].Y == MapSize || SParts[0].X == 0 || SParts[0].Y == 0) // Checking if the player is out of bounds
             {
                 GameOver();
             }
@@ -149,20 +152,20 @@ class Snake
                 {
                     foreach (var food in FoodCoords)
                     {
-                        if (i == food.x && j == food.y)
+                        if (i == food.X && j == food.Y)
                         {
                             Map[i, j] = '+';
                         }
-                        if (food.x == part.x && food.y == part.y) // If snake eats food
+                        if (food.X == part.X && food.Y == part.Y) // If snake eats food
                         {
                             FoodCoords.Remove(food);
-                            Map[food.x, food.y] = '*'; // Render snake's chunk at food coords
+                            Map[food.X, food.Y] = '*'; // Render snake's chunk at food coords
                             SnakeGrowth();
                             Score++;
                             return;
                         }
                     }
-                    if (i == part.x && j == part.y) // Render snake chunks
+                    if (i == part.X && j == part.Y) // Render snake chunks
                     {
                         Map[i, j] = '*';
                     }
@@ -175,16 +178,16 @@ class Snake
         switch (Direction)
         {
             case 0:
-                SParts.Add(new Point(SParts[0].x + 1, SParts[0].y));
+                SParts.Add(new Point(SParts[0].X + 1, SParts[0].Y));
                 break;
             case 1:
-                SParts.Add(new Point(SParts[0].x, SParts[0].y + 1));
+                SParts.Add(new Point(SParts[0].X, SParts[0].Y + 1));
                 break;
             case 2:
-                SParts.Add(new Point(SParts[0].x - 1, SParts[0].y));
+                SParts.Add(new Point(SParts[0].X - 1, SParts[0].Y));
                 break;
             case 3:
-                SParts.Add(new Point(SParts[0].x, SParts[0].y - 1));
+                SParts.Add(new Point(SParts[0].X, SParts[0].Y - 1));
                 break;
             default:
                 break;
