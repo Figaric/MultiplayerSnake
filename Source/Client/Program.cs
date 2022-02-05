@@ -1,13 +1,11 @@
-﻿using MultiplayerSnake.Client;
+﻿namespace snake;
 
-namespace snake
+class Program
 {
-    class Program
+    public static MainMenu menu;
+    static void Main(string[] args)
     {
-        public static MainMenu menu;
-        static void Main(string[] args)
-        {
-            menu = new MainMenu();
-        }
+        menu = new MainMenu();
     }
 }
+
