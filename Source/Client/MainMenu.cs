@@ -7,14 +7,17 @@ class MainMenu
 {
     public int Userinput { get; set; }
     public Snake s;
-    public Thread upd;
-    public Thread kch;
+    private Thread upd;
+    private Thread kch;
     public bool IsAlive;
     public bool Logedin = true;
+    public ConsoleColor Color;
+
     public MainMenu()
     {
         upd = new Thread(updThread); upd.Start();
         kch = new Thread(keyCheck); kch.Start();
+        Color = ConsoleColor.White;
         while (true)
         {
             DrawMainMenu();
@@ -43,7 +46,7 @@ class MainMenu
                 switch (Userinput = int.Parse(Console.ReadLine()))
                 {
                     case 1: // Single player
-                        s = new Snake(20);
+                        s = new Snake(20, Color);
                         IsAlive = true;
                         break;
                     case 2: // Multiplayer
@@ -102,7 +105,44 @@ class MainMenu
                                     Console.WriteLine("\n\t\t1) Выбор цвета");
                                     Console.WriteLine("\t\t2) Сброс");
                                     Console.WriteLine("\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
+                                    switch (Console.ReadKey(false).Key)
+                                    {
+                                        case ConsoleKey.D1:
+                                            Console.Clear();
+                                            Console.WriteLine("\n\t\t1) Белый");
+                                            Console.WriteLine("\t\t2) Красный");
+                                            Console.WriteLine("\t\t3) Зелёный");
+                                            Console.WriteLine("\t\t4) Синий");
+                                            Console.WriteLine("\t\t5) Маджента");
+                                            Console.WriteLine("\t\t6) Радуга");
+                                            Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                            switch (Console.ReadKey(false).Key)
+                                            {
+                                                case ConsoleKey.D1:
+                                                    Color = ConsoleColor.White;
+                                                    break;
+                                                case ConsoleKey.D2:
+                                                    Color = ConsoleColor.Red;
+                                                    break;
+                                                case ConsoleKey.D3:
+                                                    Color = ConsoleColor.Green;
+                                                    break;
+                                                case ConsoleKey.D4:
+                                                    Color = ConsoleColor.Blue;
+                                                    break;
+                                                case ConsoleKey.D5:
+                                                    Color = ConsoleColor.Magenta;
+                                                    break;
+                                                case ConsoleKey.D6:
+                                                    Color = ConsoleColor.Black;
+                                                    break;
+                                                default:
+                                                    break;
+                                            }
+                                            break;
+                                        default:
+                                            break;
+                                    }
                                     break;
                                 case ConsoleKey.D2:
                                     Console.Clear();

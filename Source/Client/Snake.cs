@@ -2,25 +2,6 @@
 using System.Collections.Generic;
 
 namespace MultiplayerSnake.Client;
-struct Point
-{
-
-    private int x;
-    private int y;
-
-    public int X { get => x; set => x = value; }
-    public int Y { get => y; set => y = value; }
-
-    public Point(int x, int y)
-    {
-        this.x = x;
-        this.y = y;
-    }
-    public override string ToString()
-    {
-        return $"{X} : {Y}";
-    }
-}
 
 class Snake
 {
@@ -36,10 +17,11 @@ class Snake
     private Random Rnd { get; set; }
     public bool IsAlive { get; set; }
     public ConsoleColor Color { get; set; }
+    private RainbowColor Rainbow;
     #endregion
 
     #region Constructor
-    public Snake(int x)
+    public Snake(int x, ConsoleColor c)
     {
         Direction = 0;
         Map = new char[x, x];
@@ -58,7 +40,8 @@ class Snake
         Speed = 1;
         Rnd = new Random();
         IsAlive = true;
-        Color = ConsoleColor.Red;
+        Color = c;
+        Rainbow = new RainbowColor();
     }
     #endregion
 
@@ -72,7 +55,14 @@ class Snake
             {
                 if (Map[i, j] == '*')
                 {
-                    Console.ForegroundColor = Color;
+                    if (Color == ConsoleColor.Black)
+                    {
+                        Console.ForegroundColor = Rainbow.ReturnColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = Color;
+                    }
                     Console.Write(Map[i, j]);
                     Console.ResetColor();
                 }
