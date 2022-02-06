@@ -5,12 +5,12 @@ namespace MultiplayerSnake.Client;
 
 class MainMenu
 {
-    public int userinput { get; set; }
+    public int Userinput { get; set; }
     public Snake s;
     public Thread upd;
     public Thread kch;
-    public bool isAlive = false;
-    public bool Logedin = false;
+    public bool IsAlive;
+    public bool Logedin = true;
     public MainMenu()
     {
         upd = new Thread(updThread); upd.Start();
@@ -23,7 +23,7 @@ class MainMenu
 
     public void DrawMainMenu()
     {
-        if (!isAlive)
+        if (!IsAlive)
         {
             Console.Clear();
             Console.WriteLine("\n\t\tWelcome to the");
@@ -40,13 +40,13 @@ class MainMenu
             Console.Write("\nВыберите одну из опций выше: ");
             try
             {
-                switch (userinput = int.Parse(Console.ReadLine()))
+                switch (Userinput = int.Parse(Console.ReadLine()))
                 {
-                    case 1:
+                    case 1: // Single player
                         s = new Snake(20);
-                        isAlive = true;
+                        IsAlive = true;
                         break;
-                    case 2:
+                    case 2: // Multiplayer
                         Console.Clear();
                         if (!Logedin)
                         {
@@ -55,8 +55,15 @@ class MainMenu
                             Console.WriteLine("\n\t\tНазад - любая клавиша");
                             Console.ReadKey(false);
                         }
+                        else // TODO
+                        {
+                            Console.WriteLine("\n\t\tНеобходимо зарегистрировать аккаунт!");
+                            Console.WriteLine("\t\tСделать это можно во вкладке \"Аккаунты\"");
+                            Console.WriteLine("\n\t\tНазад - любая клавиша");
+                            Console.ReadKey(false);
+                        }
                         break;
-                    case 3:
+                    case 3: // Account
                         Console.Clear();
                         if (!Logedin)
                         {
@@ -88,10 +95,34 @@ class MainMenu
                             Console.WriteLine("\n\t\t1) Настройки");
                             Console.WriteLine("\t\t2) Статистика");
                             Console.WriteLine("\n\t\tНазад - любая клавиша");
-                            Console.ReadKey(false);
+                            switch (Console.ReadKey(false).Key)
+                            {
+                                case ConsoleKey.D1:
+                                    Console.Clear();
+                                    Console.WriteLine("\n\t\t1) Выбор цвета");
+                                    Console.WriteLine("\t\t2) Сброс");
+                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                    Console.ReadKey(false);
+                                    break;
+                                case ConsoleKey.D2:
+                                    Console.Clear();
+                                    Console.WriteLine("\n\t\tИгр сыграно:             stat");
+                                    Console.WriteLine("\t\tМаксимальный счёт:       stat");
+                                    Console.WriteLine("\t\tВсего съедено:           stat");
+                                    Console.WriteLine("\t\tОбщий размер змейки:     stat");
+                                    Console.WriteLine("\n\t\tПобед в мултиплеере:     stat");
+                                    Console.WriteLine("\t\tПоражений в мултиплеере: stat");
+                                    Console.WriteLine("\t\tВинрейт:                 stat");
+                                    Console.WriteLine("\n\t\t1) Достижения");
+                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                    Console.ReadKey(false);
+                                    break;
+                                default:
+                                    break;
+                            }
                         }
                         break;
-                    case 4:
+                    case 4: // Help
                         Console.Clear();
                         Console.WriteLine("\n\t\tУправление -  wasd / стрелочки");
                         Console.WriteLine("\t\tВыход во время игры - Q");
@@ -114,7 +145,7 @@ class MainMenu
     {
         while (true)
         {
-            if (isAlive)
+            if (IsAlive)
             {
                 Thread.Sleep((int)(500 / s.Speed));
                 s.Update();
@@ -125,7 +156,7 @@ class MainMenu
     {
         while (true)
         {
-            if (isAlive)
+            if (IsAlive)
             {
                 ConsoleKeyInfo keyInfo = new ConsoleKeyInfo();
                 keyInfo = Console.ReadKey(true);
@@ -148,7 +179,7 @@ class MainMenu
                 else if (keyInfo.Key == ConsoleKey.Q)
                 {
                     s.GameOver();
-                    isAlive = s.IsAlive;
+                    IsAlive = s.IsAlive;
                 }
             }
         }
