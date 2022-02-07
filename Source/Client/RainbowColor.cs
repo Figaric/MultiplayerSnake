@@ -5,14 +5,15 @@ namespace MultiplayerSnake.Client;
 struct RainbowColor
 {
     private ushort Index;
-    public RainbowColor() { Index = 1; }
+    private readonly ushort[] Colors;
+    public RainbowColor() { Index = 0; Colors = new ushort[] { 12, 6, 14, 10, 11, 9, 13 }; }
     public ConsoleColor ReturnColor()
     {
-        if (Index == 16)
+        if (Index == 6)
         {
-            Index = 1;
+            Index = 0;
         }
         Index++;
-        return (ConsoleColor)Index - 1;
+        return (ConsoleColor)Colors[Index];
     }
 }

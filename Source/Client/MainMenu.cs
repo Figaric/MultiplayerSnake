@@ -112,7 +112,7 @@ class MainMenu
                                             Console.WriteLine("\n\t\t1) Белый");
                                             Console.WriteLine("\t\t2) Красный");
                                             Console.WriteLine("\t\t3) Зелёный");
-                                            Console.WriteLine("\t\t4) Синий");
+                                            Console.WriteLine("\t\t4) Голубой");
                                             Console.WriteLine("\t\t5) Маджента");
                                             Console.WriteLine("\t\t6) Радуга");
                                             Console.WriteLine("\n\t\tНазад - любая клавиша");
@@ -128,7 +128,7 @@ class MainMenu
                                                     Color = ConsoleColor.Green;
                                                     break;
                                                 case ConsoleKey.D4:
-                                                    Color = ConsoleColor.Blue;
+                                                    Color = ConsoleColor.Cyan;
                                                     break;
                                                 case ConsoleKey.D5:
                                                     Color = ConsoleColor.Magenta;
