@@ -1,12 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace MultiplayerSnake.Server
-{
-    public class ApplicationDbContext : DbContext
-    {
-        public DbSet<User> Users { get; set; }
+namespace MultiplayerSnake.Server;
 
-        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
-        { }
-    }
+public class ApplicationDbContext : DbContext
+{
+    public DbSet<User> Users { get; set; }
+
+    public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
+    { }
 }

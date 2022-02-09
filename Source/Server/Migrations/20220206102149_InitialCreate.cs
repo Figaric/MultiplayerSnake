@@ -1,6 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore.Migrations;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
+#nullable disable
+
 namespace MultiplayerSnake.Server.Migrations
 {
     public partial class InitialCreate : Migration
@@ -13,9 +15,8 @@ namespace MultiplayerSnake.Server.Migrations
                 {
                     Id = table.Column<int>(type: "integer", nullable: false)
                         .Annotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.IdentityByDefaultColumn),
-                    Username = table.Column<string>(type: "character varying(255)", maxLength: 255, nullable: false),
-                    Password = table.Column<string>(type: "text", nullable: false),
-                    Color = table.Column<int>(type: "integer", nullable: false)
+                    Username = table.Column<string>(type: "text", nullable: false),
+                    Password = table.Column<string>(type: "text", nullable: false)
                 },
                 constraints: table =>
                 {

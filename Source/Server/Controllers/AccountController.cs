@@ -1,37 +1,89 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
+using MultiplayerSnake.Shared;
 
-namespace MultiplayerSnake.Server
+namespace MultiplayerSnake.Server;
+
+[ApiController]
+[Route(ApiEndpoints.AccountRoute)]
+public class AccountController : ControllerBase
 {
-    [ApiController]
-    [Route("api/account")]
-    public class AccountController : ControllerBase
+    private readonly ApplicationDbContext _context;
+
+    private readonly IMapper _mapper;
+
+    public AccountController(ApplicationDbContext context, IMapper mapper)
     {
-        private readonly IMediator _mediator;
+        _context = context;
+        _mapper = mapper;
+    }
 
-        public AccountController(IMediator mediator)
+    [HttpPost(ApiEndpoints.LoginRoute)]
+    public async Task<IResponse> Login(UserLoginDto dto)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
+
+        if(user is null)
         {
-            _mediator = mediator;
+            return ResponseFail<FieldError>.Failed(
+                new FieldError
+                {
+                    Field = nameof(dto.UserName),
+                    Message = "Such user does not exist"
+                });
         }
 
-        [HttpPost(ApiRoutes.Register)]
-        public async Task<IActionResult> RegisterAsync(UserRegisterDto registerDto)
-        {
-            ResponseBase response = await _mediator.Send(registerDto);
+        var passwordVarificationResult = Argon2.Verify(user.Password, dto.Password);
 
-            return Created(HttpContext.Request.Path, response);
+        if(!passwordVarificationResult)
+        {
+            return ResponseFail<FieldError>.Failed(
+                new FieldError
+                {
+                    Field = nameof(dto.Password),
+                    Message = "Invalid password"
+                });
         }
 
-        [HttpPost(ApiRoutes.Login)]
-        public async Task<IActionResult> LoginAsync(UserLoginDto loginDto)
-        {
-            ResponseBase response = await _mediator.Send(loginDto);
+        // TODO: Generate Jwt token
 
-            return Ok(response);
+        return ResponseData<LoginResponseData>.Succeed(new LoginResponseData
+        {
+            JwtToken = "" 
+        });
+    }
+
+    [HttpPost(ApiEndpoints.RegisterRoute)]
+    public async Task<IResponse> RegisterAsync(UserRegisterDto dto)
+    {
+        string hashedPassword = Argon2.Hash(dto.Password);
+
+        User user = _mapper.Map<User>(dto);
+        user.Password = hashedPassword;
+
+        await _context.Users.AddAsync(user);
+
+        try
+        {
+            await _context.SaveChangesAsync();
         }
+        catch
+        {
+            if ((await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName)) != null)
+            {
+                return ResponseFail<FieldError>.Failed(
+                    new FieldError
+                    {
+                        Field = nameof(user.UserName),
+                        Message = "This username is already taken"
+                    });
+            }
+
+            return ResponseFail<FieldError>.Failed();
+        }
+
+        return ResponseBase.Succeed();
     }
 }

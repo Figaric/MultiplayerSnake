@@ -1,21 +1,13 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.ComponentModel.DataAnnotations;
 
-namespace MultiplayerSnake.Server
+namespace MultiplayerSnake.Server;
+
+[Index(nameof(UserName), IsUnique = true)]
+public class User
 {
-    [Index(nameof(Username), IsUnique = true)]
-    public class User
-    {
-        public int Id { get; set; }
+    public string Id { get; set; }
 
-        [StringLength(255)]
-        [Required]
-        public string Username { get; set; }
+    public string UserName { get; set; }
 
-        [Required]
-        public string Password { get; set; }
-
-        [Range(1, 14)]
-        public int Color { get; set; }
-    }
+    public string Password { get; set; }
 }
