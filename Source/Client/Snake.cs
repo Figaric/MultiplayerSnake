@@ -1,207 +1,203 @@
-﻿using MultiplayerSnake.Client;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
-namespace snake
+namespace MultiplayerSnake.Client;
+
+class Snake
 {
-    struct Point
+    #region Properties
+    public int Direction { get; set; }
+    private List<Point> SParts { get; set; }
+    private char[,] Map { get; set; }
+    private List<Point> FoodCoords { get; set; }
+    public double Speed { get; set; }
+    private int MapSize { get; set; }
+    private int Score { get; set; }
+    private int IterCount { get; set; }
+    private Random Rnd { get; set; }
+    public bool IsAlive { get; set; }
+    public ConsoleColor Color { get; set; }
+    private RainbowColor Rainbow;
+    #endregion
+
+    #region Constructor
+    public Snake(int x, ConsoleColor c)
     {
-
-        public int x;
-        public int y;
-
-        public Point(int x, int y)
+        Direction = 0;
+        Map = new char[x, x];
+        MapSize = (int)Math.Sqrt(Map.Length) - 1;
+        for (int i = 0; i < MapSize; i++) // Generating map bounds
         {
-            this.x = x;
-            this.y = y;
+            Map[0, i] = '#';
+            Map[i, 0] = '#';
+            Map[MapSize, i] = '#';
+            Map[i, MapSize] = '#';
         }
-        public override string ToString()
-        {
-            return $"{x} : {y}";
-        }
+        Map[MapSize, MapSize] = '#';
+        SParts = new List<Point>() { new Point((MapSize + 1) / 2, (MapSize + 1) / 2) };
+        FoodCoords = new List<Point>() { };
+        Score = 0;
+        Speed = 1;
+        Rnd = new Random();
+        IsAlive = true;
+        Color = c;
+        Rainbow = new RainbowColor();
     }
+    #endregion
 
-    class Snake
+    #region Funcs
+    public void Draw()
     {
-        #region Properties
-        public int Direction { get; set; }
-        public List<Point> sParts { get; set; }
-        public char[,] Map { get; set; }
-        public List<Point> foodCoords { get; set; }
-        public double Speed { get; set; }
-        public int mapSize { get; set; }
-        public int Score { get; set; }
-        public int iterCount { get; set; }
-        public Random rnd { get; set; }
-        public bool IsAlive { get; set; }
-        public ConsoleColor Color { get; set; }
-        public MainMenu Menu { get; set; }
-        #endregion
-
-        #region Constructor
-        public Snake(int x)
+        Console.Clear();
+        for (int i = 0; i < MapSize + 1; i++) //  Ingame ui
         {
-            Direction = 0;
-            Map = new char[x, x];
-            mapSize = (int)Math.Sqrt(Map.Length) - 1;
-            for (int i = 0; i < mapSize; i++) // Generating map bounds
+            for (int j = 0; j < MapSize + 1; j++)
             {
-                Map[0, i] = '#';
-                Map[i, 0] = '#';
-                Map[mapSize, i] = '#';
-                Map[i, mapSize] = '#';
-            }
-            Map[mapSize, mapSize] = '#';
-            sParts = new List<Point>() { new Point((mapSize + 1) / 2, (mapSize + 1) / 2) };
-            foodCoords = new List<Point>() { };
-            Score = 0;
-            Speed = 1;
-            rnd = new Random();
-            IsAlive = true;
-        }
-        #endregion
-
-        #region Funcs
-        public void Draw()
-        {
-            Console.Clear();
-            for (int i = 0; i < mapSize + 1; i++) //  Ingame ui
-            {
-                for (int j = 0; j < mapSize + 1; j++)
+                if (Map[i, j] == '*')
+                {
+                    if (Color == ConsoleColor.Black)
+                    {
+                        Console.ForegroundColor = Rainbow.ReturnColor();
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = Color;
+                    }
+                    Console.Write(Map[i, j]);
+                    Console.ResetColor();
+                }
+                else
                 {
                     Console.Write(Map[i, j]);
                 }
-                Console.Write("\n");
             }
-            Console.WriteLine($"Score: {Score}");
+            Console.Write("\n");
         }
-
-        public void Update()
+        Console.WriteLine($"Score: {Score}");
+    }
+    public void Update()
+    {
+        if (IsAlive)
         {
-            if (IsAlive)
+            Point lCoords = SParts[0]; // Saves coords of the first snake's chunk
+            switch (Direction) // Moving snake's chunks     PS. Idk what the fuck i just did but it works, so DON'T TOUCH
             {
-                Point lCoords = sParts[0]; // Saves coords of the first snake's chunk
-                switch (Direction) // Moving snake's chunks     PS. Idk what the fuck i just did but it works, so DON'T TOUCH
-                {
-                    case 0: // Up
-                        sParts.Remove(sParts[sParts.Count - 1]);
-                        sParts.Reverse();
-                        sParts.Add(new Point(lCoords.x + 1, lCoords.y));
-                        sParts.Reverse();
-                        break;
-                    case 1: // Right
-                        sParts.Remove(sParts[sParts.Count - 1]);
-                        sParts.Reverse();
-                        sParts.Add(new Point(lCoords.x, lCoords.y + 1));
-                        sParts.Reverse();
-                        break;
-                    case 2: // Down
-                        sParts.Remove(sParts[sParts.Count - 1]);
-                        sParts.Reverse();
-                        sParts.Add(new Point(lCoords.x - 1, lCoords.y));
-                        sParts.Reverse();
-                        break;
-                    case 3: // Left
-                        sParts.Remove(sParts[sParts.Count - 1]);
-                        sParts.Reverse();
-                        sParts.Add(new Point(lCoords.x, lCoords.y - 1));
-                        sParts.Reverse();
-                        break;
-                    default:
-                        break;
-                }
-                mapConstruct();
-                iterCount++;
-                if (iterCount % mapSize * Speed == 0 && Speed < 50) // Speeding up the game
-                {
-                    Speed = Math.Round(Speed * 1.1, 2);
-                }
-                generateFood();
-                Draw();
-                if (sParts[0].x == mapSize || sParts[0].y == mapSize || sParts[0].x == 0 || sParts[0].y == 0) // Checking if the player is out of bounds
-                {
-                    GameOver();
-                }
-                SelfCollideCheck();
-            }
-        }
-
-        private void generateFood()
-        {
-            if (iterCount % mapSize == 0 || foodCoords.Count == 0) // If it's time to spawn food or there is no food on the map
-            {
-                foodCoords.Add(new Point(rnd.Next(1, mapSize), rnd.Next(1, mapSize)));
-            }
-        }
-        private void mapConstruct()
-        {
-            for (int i = 1; i < mapSize; i++)
-            {
-                for (int j = 1; j < mapSize; j++)
-                {
-                    Map[i, j] = ' '; // Everything exept bounds is void now
-                    foreach (var part in sParts) // Map construction based on the position of the snake parts
-                    {
-                        foreach (var food in foodCoords)
-                        {
-                            if (i == food.x && j == food.y)
-                            {
-                                Map[i, j] = '+';
-                            }
-                            if (food.x == part.x && food.y == part.y) // If snake eats food
-                            {
-                                foodCoords.Remove(food); 
-                                Map[food.x, food.y] = '*'; // Render snake's chunk at food coords
-                                snakeGrowth();
-                                Score++;
-                                return;
-                            }
-                        }
-                        if (i == part.x && j == part.y) // Render snake chunks
-                        {
-                            Map[i, j] = '*';
-                        }
-                    }
-                }
-            }
-        }
-
-        private void snakeGrowth() // Adding a new chunk at the end of snake
-        {
-            switch (Direction)
-            {
-                case 0:
-                    sParts.Add(new Point(sParts[0].x + 1, sParts[0].y));
+                case 0: // Up
+                    SParts.Remove(SParts[SParts.Count - 1]);
+                    SParts.Reverse();
+                    SParts.Add(new Point(lCoords.X + 1, lCoords.Y));
+                    SParts.Reverse();
                     break;
-                case 1:
-                    sParts.Add(new Point(sParts[0].x, sParts[0].y + 1));
+                case 1: // Right
+                    SParts.Remove(SParts[SParts.Count - 1]);
+                    SParts.Reverse();
+                    SParts.Add(new Point(lCoords.X, lCoords.Y + 1));
+                    SParts.Reverse();
                     break;
-                case 2:
-                    sParts.Add(new Point(sParts[0].x - 1, sParts[0].y));
+                case 2: // Down
+                    SParts.Remove(SParts[SParts.Count - 1]);
+                    SParts.Reverse();
+                    SParts.Add(new Point(lCoords.X - 1, lCoords.Y));
+                    SParts.Reverse();
                     break;
-                case 3:
-                    sParts.Add(new Point(sParts[0].x, sParts[0].y - 1));
+                case 3: // Left
+                    SParts.Remove(SParts[SParts.Count - 1]);
+                    SParts.Reverse();
+                    SParts.Add(new Point(lCoords.X, lCoords.Y - 1));
+                    SParts.Reverse();
                     break;
                 default:
                     break;
             }
-        }
-        public void GameOver()
-        {
-            IsAlive = false;
-            Console.WriteLine("GameOver");
-            Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
-        }
-        public void SelfCollideCheck()
-        {
-            Point forepart = sParts[0];
-            List<Point> temp = new List<Point>(sParts);
-            temp.RemoveAt(0);
-            if (temp.Contains(forepart))
+            MapConstruct();
+            IterCount++;
+            if (IterCount % MapSize * Speed == 0 && Speed < 50) // Speeding up the game
+            {
+                Speed = Math.Round(Speed * 1.1, 2);
+            }
+            GenerateFood();
+            Draw();
+            if (SParts[0].X == MapSize || SParts[0].Y == MapSize || SParts[0].X == 0 || SParts[0].Y == 0) // Checking if the player is out of bounds
             {
                 GameOver();
             }
+            SelfCollideCheck();
         }
-        #endregion
     }
+    private void GenerateFood()
+    {
+        if (IterCount % MapSize == 0 || FoodCoords.Count == 0) // If it's time to spawn food or there is no food on the map
+        {
+            FoodCoords.Add(new Point(Rnd.Next(1, MapSize), Rnd.Next(1, MapSize)));
+        }
+    }
+    private void MapConstruct()
+    {
+        for (int i = 1; i < MapSize; i++)
+        {
+            for (int j = 1; j < MapSize; j++)
+            {
+                Map[i, j] = ' '; // Everything exept bounds is void now
+                foreach (var part in SParts) // Map construction based on the position of the snake parts
+                {
+                    foreach (var food in FoodCoords)
+                    {
+                        if (i == food.X && j == food.Y)
+                        {
+                            Map[i, j] = '+';
+                        }
+                        if (food.X == part.X && food.Y == part.Y) // If snake eats food
+                        {
+                            FoodCoords.Remove(food);
+                            Map[food.X, food.Y] = '*'; // Render snake's chunk at food coords
+                            SnakeGrowth();
+                            Score++;
+                            return;
+                        }
+                    }
+                    if (i == part.X && j == part.Y) // Render snake chunks
+                    {
+                        Map[i, j] = '*';
+                    }
+                }
+            }
+        }
+    }
+    private void SnakeGrowth()
+    {
+        switch (Direction)
+        {
+            case 0:
+                SParts.Add(new Point(SParts[0].X + 1, SParts[0].Y));
+                break;
+            case 1:
+                SParts.Add(new Point(SParts[0].X, SParts[0].Y + 1));
+                break;
+            case 2:
+                SParts.Add(new Point(SParts[0].X - 1, SParts[0].Y));
+                break;
+            case 3:
+                SParts.Add(new Point(SParts[0].X, SParts[0].Y - 1));
+                break;
+            default:
+                break;
+        }
+    }
+    public void GameOver()
+    {
+        IsAlive = false;
+        Console.WriteLine("GameOver");
+        Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
+    }
+    public void SelfCollideCheck()
+    {
+        Point forepart = SParts[0];
+        List<Point> temp = new List<Point>(SParts);
+        temp.RemoveAt(0);
+        if (temp.Contains(forepart))
+        {
+            GameOver();
+        }
+    }
+    #endregion
 }
