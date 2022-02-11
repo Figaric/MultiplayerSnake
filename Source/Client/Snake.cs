@@ -1,4 +1,5 @@
-﻿using System;
+﻿using MultiplayerSnake.Shared;
+using System;
 using System.Collections.Generic;
 
 namespace MultiplayerSnake.Client;
