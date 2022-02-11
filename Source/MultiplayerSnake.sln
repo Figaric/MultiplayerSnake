@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Client", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Server", "Server\MultiplayerSnake.Server.csproj", "{08A71BB9-C83A-4560-9071-7D5C95249759}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Shared", "MultiplayerSnake.Shared\MultiplayerSnake.Shared.csproj", "{20EDD184-33E7-41E1-B141-3AB0E51D1307}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Shared", "Shared\MultiplayerSnake.Shared.csproj", "{20EDD184-33E7-41E1-B141-3AB0E51D1307}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
