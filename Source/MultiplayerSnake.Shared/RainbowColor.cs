@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace MultiplayerSnake.Client;
+namespace MultiplayerSnake.Shared;
 
-struct RainbowColor
+public struct RainbowColor
 {
     private ushort Index;
     private readonly ushort[] Colors;

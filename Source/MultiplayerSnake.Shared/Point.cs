@@ -1,6 +1,6 @@
-﻿namespace MultiplayerSnake.Client;
+﻿namespace MultiplayerSnake.Shared;
 
-struct Point
+public struct Point
 {
 
     private int x;
