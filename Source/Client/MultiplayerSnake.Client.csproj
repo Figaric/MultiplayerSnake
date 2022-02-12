@@ -6,7 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\MultiplayerSnake.Shared\MultiplayerSnake.Shared.csproj" />
+    <ProjectReference Include="..\Shared\MultiplayerSnake.Shared.csproj" />
   </ItemGroup>
 
 </Project>
