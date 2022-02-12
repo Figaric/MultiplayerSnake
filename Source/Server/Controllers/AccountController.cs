@@ -2,6 +2,7 @@
 using Isopoh.Cryptography.Argon2;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using MultiplayerSnake.Shared;
 
 namespace MultiplayerSnake.Server;
@@ -14,10 +15,13 @@ public class AccountController : ControllerBase
 
     private readonly IMapper _mapper;
 
-    public AccountController(ApplicationDbContext context, IMapper mapper)
+    private readonly IOptions<JwtSettings> _jwtSettings;
+
+    public AccountController(ApplicationDbContext context, IMapper mapper, IOptions<JwtSettings> jwtSettings)
     {
         _context = context;
         _mapper = mapper;
+        _jwtSettings = jwtSettings;
     }
 
     [HttpPost(ApiEndpoints.LoginRoute)]
@@ -51,7 +55,7 @@ public class AccountController : ControllerBase
 
         return ResponseData<LoginResponseData>.Succeed(new LoginResponseData
         {
-            JwtToken = "" 
+            JwtToken = Utillities.GenerateJwtToken(user, _jwtSettings.Value) 
         });
     }
 

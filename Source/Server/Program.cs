@@ -9,21 +9,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configure services
-
-Console.WriteLine("token: " + Utillities.GenerateJwtToken(
-    new User
-    {
-        Id = "1",
-        UserName = "bob",
-        Password = "bob123"
-    },
-    new JwtSettings
-    {
-        JwtIssuer = builder.Configuration["Jwt:Issuer"],
-        JwtAudience = builder.Configuration["Jwt:Audience"],
-        JwtSecret = builder.Configuration["Jwt:Secret"]
-    }));
+builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
@@ -34,8 +20,6 @@ builder.Services.AddTransient<IValidationManager, ValidationManager>();
 builder.Services.AddAuthentication()
     .AddJwtBearer(options =>
     {
-        global::System.Console.WriteLine("ddddddd");
-
         options.TokenValidationParameters = new TokenValidationParameters
         {
             ValidateIssuer = true,
@@ -43,11 +27,11 @@ builder.Services.AddAuthentication()
             ValidateLifetime = true,
             ValidateIssuerSigningKey = true,
 
-            ValidIssuer = builder.Configuration["Jwt:Issuer"],
-            ValidAudience = builder.Configuration["Jwt:Audience"],
+            ValidIssuer = builder.Configuration["JwtSettings:Issuer"],
+            ValidAudience = builder.Configuration["JwtSettings:Audience"],
 
             IssuerSigningKey = new SymmetricSecurityKey(
-                Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Secret"])
+                Encoding.UTF8.GetBytes(builder.Configuration["JwtSettings:Secret"])
                 )
         };
 

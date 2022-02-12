@@ -41,16 +41,16 @@ namespace MultiplayerSnake.Server
                 new Claim(ClaimsIdentity.DefaultNameClaimType, user.UserName),
 
                 // Add user Id so that UserManager.GetUserAsync can find the user based on Id
-                new Claim(ClaimTypes.NameIdentifier, user.Id)
+                new Claim(ClaimTypes.NameIdentifier, user.Id.ToString())
             };
 
             var credentials = new SigningCredentials(
-                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.JwtSecret)),
+                new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtSettings.Secret)),
                 SecurityAlgorithms.HmacSha256);
 
             var token = new JwtSecurityToken(
-                issuer: jwtSettings.JwtIssuer,
-                audience: jwtSettings.JwtAudience,
+                issuer: jwtSettings.Issuer,
+                audience: jwtSettings.Audience,
                 claims: claims,
                 signingCredentials: credentials,
                 expires: DateTime.Now.AddMonths(3)
