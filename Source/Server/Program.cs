@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using MultiplayerSnake.Shared;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using System.Net;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,11 +17,13 @@ builder.Host.ConfigureLogging(logging =>
     logging.AddConfiguration(builder.Configuration);
     logging.AddConsole();
 
-    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.None);
+    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
+    logging.AddFilter("Microsoft.EntityFrameworkCore.Update", LogLevel.None);
+    logging.AddFilter("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogLevel.None);
 });
 
 builder.Services.AddSignalR();
-builder.Services.AddControllers();
+builder.Services.AddControllers(options => options.Filters.Add<ResponseMappingFilter>());
 builder.Services.AddDbContext<ApplicationDbContext>(cfg =>
     {
         cfg.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
@@ -71,9 +74,35 @@ var app = builder.Build();
 
 app.UseExceptionHandler(a =>
 {
+
     a.Run(async context =>
     {
-        await context.Response.WriteAsJsonAsync(new { Error = "djwidjwid" });
+        app.Logger.LogWarning("HElLOOOOOOOO");
+        if (context.Request.Path.StartsWithSegments('/' + ApiEndpoints.AccountRoute + '/' + ApiEndpoints.RegisterRoute))
+        {
+            var dto = (UserRegisterDto)context.Items["RegisterDto"];
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var dbContext = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+
+                if ((await dbContext.Users.FirstOrDefaultAsync(u => dto.UserName == u.UserName)) != null)
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    await context.Response.WriteAsJsonAsync(new
+                    {
+                        errors = new List<FieldError>
+                        {
+                            new FieldError
+                            {
+                                Field = nameof(dto.UserName),
+                                Message = "This UserName is already taken."
+                            }
+                        }
+                    });
+                }
+            }
+        }
     });
 });
 
