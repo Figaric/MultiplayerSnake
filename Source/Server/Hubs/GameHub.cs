@@ -7,15 +7,25 @@ namespace MultiplayerSnake.Server
     [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     public class GameHub : Hub
     {
-        public async Task SendToMacros(string serverName, string data)
+        public override Task OnConnectedAsync()
         {
-            await Clients.All.SendAsync("MacrosInbound", serverName, data);
+            Console.WriteLine("New connection: " + Context.User.Identity.Name);
+
+            return base.OnConnectedAsync();
         }
 
-
-        public async Task ConnectorStatus(string serverName, string data)
+        public async Task CreateRoom()
         {
-            await Clients.All.SendAsync("UpdateConnectorStatus", serverName, data);
+            string roomId = Guid.NewGuid().ToString();
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Clients.Caller.SendAsync("CreateRoomResponse", roomId);
+        }
+
+        public async Task JoinRoom(string roomId)
+        {
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync("NewPlayer", Context.User.Identity.Name);
         }
     }
 }

@@ -25,7 +25,7 @@ public class ValidationMiddleware
 
         var result = await _validationManager.ValidateAsync(dto);
 
-        if(!result.IsValid)
+        if (!result.IsValid)
         {
             var fieldErrors = result.Errors
                 .Select(e => new FieldError
@@ -41,7 +41,7 @@ public class ValidationMiddleware
             });
             await context.Response.StartAsync();
 
-            return ;
+            return;
         }
 
         await _next(context);
