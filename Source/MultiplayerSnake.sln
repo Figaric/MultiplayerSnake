@@ -9,6 +9,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Server", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.Shared", "Shared\MultiplayerSnake.Shared.csproj", "{20EDD184-33E7-41E1-B141-3AB0E51D1307}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MultiplayerSnake.TestConsole", "TestConsole\MultiplayerSnake.TestConsole.csproj", "{F8F3CB41-29B5-4019-B581-98813C33ADB6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -27,6 +29,10 @@ Global
 		{20EDD184-33E7-41E1-B141-3AB0E51D1307}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20EDD184-33E7-41E1-B141-3AB0E51D1307}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20EDD184-33E7-41E1-B141-3AB0E51D1307}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F8F3CB41-29B5-4019-B581-98813C33ADB6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F8F3CB41-29B5-4019-B581-98813C33ADB6}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F8F3CB41-29B5-4019-B581-98813C33ADB6}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F8F3CB41-29B5-4019-B581-98813C33ADB6}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
