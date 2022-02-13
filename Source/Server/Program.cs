@@ -11,9 +11,20 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection("JwtSettings"));
 
+builder.Host.ConfigureLogging(logging =>
+{
+    logging.AddConfiguration(builder.Configuration);
+    logging.AddConsole();
+
+    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.None);
+});
+
 builder.Services.AddSignalR();
 builder.Services.AddControllers();
-builder.Services.AddDbContext<ApplicationDbContext>(cfg => cfg.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+builder.Services.AddDbContext<ApplicationDbContext>(cfg =>
+    {
+        cfg.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"));
+    });
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 builder.Services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>(ServiceLifetime.Transient);
 builder.Services.AddTransient<IValidationManager, ValidationManager>();
@@ -67,6 +78,7 @@ app.UseExceptionHandler(a =>
 });
 
 app.UseConditionalMiddleware<ValidationMiddleware>(ApiEndpoints.AccountRoute);
+app.UseMiddleware<LoggingMiddleware>();
 app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
