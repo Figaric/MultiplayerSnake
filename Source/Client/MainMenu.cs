@@ -13,7 +13,7 @@ class MainMenu
     private Thread upd;
     private Thread kch;
     public bool IsAlive;
-    public bool Logedin = true;
+    public bool Logedin = false;
     public ColorManager SnakeColor;
     public ColorManager BoundColor;
 
@@ -31,8 +31,8 @@ class MainMenu
 
     public async Task Register(string login, string pwd)
     {
-        var client = new RestClient("https://localhost:5001/account/register/").AddDefaultHeader(KnownHeaders.Accept, "*/*");
-        var request = new RestRequest().AddQueryParameter("Username", login).AddQueryParameter("Password", pwd);
+        var client = new RestClient("http://localhost:5000/account/register/");
+        var request = new RestRequest().AddJsonBody(new { Username = login, Password = pwd });
         var response = await client.PostAsync(request);
         Console.WriteLine(response);
     }
