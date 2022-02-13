@@ -1,5 +1,8 @@
-﻿using System;
+﻿using RestSharp;
+using System;
 using System.Threading;
+using System.Threading.Tasks;
+using MultiplayerSnake.Shared;
 
 namespace MultiplayerSnake.Client;
 
@@ -11,20 +14,28 @@ class MainMenu
     private Thread kch;
     public bool IsAlive;
     public bool Logedin = true;
-    public ConsoleColor Color;
+    public ColorManager Color;
 
     public MainMenu()
     {
         upd = new Thread(updThread); upd.Start();
         kch = new Thread(keyCheck); kch.Start();
-        Color = ConsoleColor.White;
+        Color = new ColorManager();
         while (true)
         {
             DrawMainMenu();
         }
     }
 
-    public void DrawMainMenu()
+    public async Task Register(string login, string pwd)
+    {
+        var client = new RestClient("https://localhost:5001/account/register/").AddDefaultHeader(KnownHeaders.Accept, "*/*");
+        var request = new RestRequest().AddQueryParameter("Username", login).AddQueryParameter("Password", pwd);
+        var response = await client.PostAsync(request);
+        Console.WriteLine(response);
+    }
+
+    public async Task DrawMainMenu()
     {
         if (!IsAlive)
         {
@@ -77,7 +88,13 @@ class MainMenu
                             {
                                 case ConsoleKey.D1:
                                     Console.Clear();
-                                    Console.WriteLine("\n\t\t\tReg");
+                                    Console.WriteLine("\n\tВведите логин: ");
+                                    string login = Console.ReadLine();
+                                    Console.WriteLine("\n\tВведите пароль: ");
+                                    string password = Console.ReadLine();
+
+                                    await Register(login, password);
+
                                     Console.WriteLine("\n\t\tНазад - любая клавиша");
                                     Console.ReadKey(false);
                                     //registration
@@ -119,22 +136,22 @@ class MainMenu
                                             switch (Console.ReadKey(false).Key)
                                             {
                                                 case ConsoleKey.D1:
-                                                    Color = ConsoleColor.White;
+                                                    Color.Color = ConsoleColor.White;
                                                     break;
                                                 case ConsoleKey.D2:
-                                                    Color = ConsoleColor.Red;
+                                                    Color.Color = ConsoleColor.Red;
                                                     break;
                                                 case ConsoleKey.D3:
-                                                    Color = ConsoleColor.Green;
+                                                    Color.Color = ConsoleColor.Green;
                                                     break;
                                                 case ConsoleKey.D4:
-                                                    Color = ConsoleColor.Cyan;
+                                                    Color.Color = ConsoleColor.Cyan;
                                                     break;
                                                 case ConsoleKey.D5:
-                                                    Color = ConsoleColor.Magenta;
+                                                    Color.Color = ConsoleColor.Magenta;
                                                     break;
                                                 case ConsoleKey.D6:
-                                                    Color = ConsoleColor.Black;
+                                                    Color.Color = ConsoleColor.Black;
                                                     break;
                                                 default:
                                                     break;

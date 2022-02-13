@@ -17,12 +17,11 @@ class Snake
     private int IterCount { get; set; }
     private Random Rnd { get; set; }
     public bool IsAlive { get; set; }
-    public ConsoleColor Color { get; set; }
-    private RainbowColor Rainbow;
+    public ColorManager Color;
     #endregion
 
     #region Constructor
-    public Snake(int x, ConsoleColor c)
+    public Snake(int x, ColorManager c)
     {
         Direction = 0;
         Map = new char[x, x];
@@ -42,7 +41,6 @@ class Snake
         Rnd = new Random();
         IsAlive = true;
         Color = c;
-        Rainbow = new RainbowColor();
     }
     #endregion
 
@@ -56,14 +54,7 @@ class Snake
             {
                 if (Map[i, j] == '*')
                 {
-                    if (Color == ConsoleColor.Black)
-                    {
-                        Console.ForegroundColor = Rainbow.ReturnColor();
-                    }
-                    else
-                    {
-                        Console.ForegroundColor = Color;
-                    }
+                    Console.ForegroundColor = Color.ReturnColor();
                     Console.Write(Map[i, j]);
                     Console.ResetColor();
                 }

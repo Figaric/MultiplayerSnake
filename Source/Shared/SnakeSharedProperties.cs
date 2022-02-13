@@ -9,7 +9,7 @@ class SnakeSharedProperties
     private int Score { get; set; }
     public bool IsAlive { get; set; }
     public ConsoleColor Color { get; set; }
-    private RainbowColor Rainbow;
+    private ColorManager Rainbow;
     #endregion
 
 }
