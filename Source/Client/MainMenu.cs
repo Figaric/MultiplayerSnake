@@ -3,6 +3,9 @@ using System;
 using System.Threading;
 using System.Threading.Tasks;
 using MultiplayerSnake.Shared;
+using System.IO;
+using System.Text;
+using Newtonsoft.Json;
 
 namespace MultiplayerSnake.Client;
 
@@ -16,6 +19,7 @@ class MainMenu
     public bool Logedin = false;
     public ColorManager SnakeColor;
     public ColorManager BoundColor;
+    private string login, password;
 
     public MainMenu()
     {
@@ -29,12 +33,53 @@ class MainMenu
         }
     }
 
-    public async Task Register(string login, string pwd)
+    public async Task Register(string login, string password)
     {
         var client = new RestClient("http://localhost:5000/account/register/");
-        var request = new RestRequest().AddJsonBody(new { Username = login, Password = pwd });
+        var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
         var response = await client.PostAsync(request);
-        Console.WriteLine(response);
+    }
+    public async Task Login(string login, string password)
+    {
+        var client = new RestClient("http://localhost:5000/account/login/");
+        var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
+        var response = await client.PostAsync(request);
+        string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\lolsquad\\MultiplayerSnake\\";
+        Directory.CreateDirectory(path);
+        FileStream f = File.OpenWrite(path + "Jwt.json");
+        string jwt = JsonConvert.DeserializeObject<LoginResponseData>(response.Content).JwtToken;
+        f.Write(Encoding.UTF8.GetBytes(response.Content));
+        f.Close();
+    }
+    public async Task RegisterMenuDraw()
+    {
+        Console.Clear();
+        Console.WriteLine("\n\tВведите логин: ");
+        login = Console.ReadLine();
+        Console.WriteLine("\n\tВведите пароль: ");
+        password = Console.ReadLine();
+
+        Console.Clear();
+        Register(login, password);
+
+        Console.WriteLine("\n\t\tYou are succesfully registered");
+        Console.WriteLine("\n\t\tНазад - любая клавиша");
+        Console.ReadKey(false);
+    }
+    public async Task LoginMenuDraw()
+    {
+        Console.Clear();
+        Console.WriteLine("\n\tВведите логин: ");
+        login = Console.ReadLine();
+        Console.WriteLine("\n\tВведите пароль: ");
+        password = Console.ReadLine();
+
+        Console.Clear();
+        Login(login, password);
+
+        Console.WriteLine("\n\t\tYou are succesfully loged-in");
+        Console.WriteLine("\n\t\tНазад - любая клавиша");
+        Console.ReadKey(false);
     }
 
     public async Task DrawMainMenu()
@@ -81,38 +126,7 @@ class MainMenu
                         break;
                     case 3: // Account
                         Console.Clear();
-                        if (!Logedin)
-                        {
-                            Console.WriteLine("\n\t\t1) Зарегистрироваться");
-                            Console.WriteLine("\t\t2) Войти");
-                            Console.WriteLine("\n\t\tНазад - любая клавиша");
-                            switch (Console.ReadKey(false).Key)
-                            {
-                                case ConsoleKey.D1:
-                                    Console.Clear();
-                                    Console.WriteLine("\n\tВведите логин: ");
-                                    string login = Console.ReadLine();
-                                    Console.WriteLine("\n\tВведите пароль: ");
-                                    string password = Console.ReadLine();
-
-                                    await Register(login, password);
-
-                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
-                                    //registration
-                                    break;
-                                case ConsoleKey.D2:
-                                    Console.Clear();
-                                    Console.WriteLine("\n\t\t\tLog-in");
-                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
-                                    //log-in
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
+                        if (Logedin)
                         {
                             Console.WriteLine("\n\t\t1) Настройки");
                             Console.WriteLine("\t\t2) Статистика");
@@ -215,6 +229,23 @@ class MainMenu
                                     Console.WriteLine("\n\t\t1) Достижения");
                                     Console.WriteLine("\n\t\tНазад - любая клавиша");
                                     Console.ReadKey(false);
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        else
+                        {
+                            Console.WriteLine("\n\t\t1) Зарегистрироваться");
+                            Console.WriteLine("\t\t2) Войти");
+                            Console.WriteLine("\n\t\tНазад - любая клавиша");
+                            switch (Console.ReadKey(false).Key)
+                            {
+                                case ConsoleKey.D1:
+                                    RegisterMenuDraw();
+                                    break;
+                                case ConsoleKey.D2:
+                                    LoginMenuDraw();
                                     break;
                                 default:
                                     break;
