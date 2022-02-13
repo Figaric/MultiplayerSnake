@@ -14,9 +14,11 @@
 
         public async Task InvokeAsync(HttpContext context)
         {
-            _logger.LogInformation("New Request: " + context.Request.Path);
+            _logger.LogInformation("Processing: " + context.Request.Path);
 
             await _next(context);
+
+            _logger.LogInformation("Exited with status code: " + context.Response.StatusCode);
         }
     }
 }
