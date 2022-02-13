@@ -14,13 +14,15 @@ class MainMenu
     private Thread kch;
     public bool IsAlive;
     public bool Logedin = true;
-    public ColorManager Color;
+    public ColorManager SnakeColor;
+    public ColorManager BoundColor;
 
     public MainMenu()
     {
         upd = new Thread(updThread); upd.Start();
         kch = new Thread(keyCheck); kch.Start();
-        Color = new ColorManager();
+        SnakeColor = new ColorManager();
+        BoundColor = new ColorManager();
         while (true)
         {
             DrawMainMenu();
@@ -57,7 +59,7 @@ class MainMenu
                 switch (Userinput = int.Parse(Console.ReadLine()))
                 {
                     case 1: // Single player
-                        s = new Snake(20, Color);
+                        s = new Snake(20, SnakeColor, BoundColor);
                         IsAlive = true;
                         break;
                     case 2: // Multiplayer
@@ -120,38 +122,78 @@ class MainMenu
                                 case ConsoleKey.D1:
                                     Console.Clear();
                                     Console.WriteLine("\n\t\t1) Выбор цвета");
-                                    Console.WriteLine("\t\t2) Сброс");
+                                    Console.WriteLine("\t\t2) Сброс"); //TODO
                                     Console.WriteLine("\n\t\tНазад - любая клавиша");
                                     switch (Console.ReadKey(false).Key)
                                     {
                                         case ConsoleKey.D1:
                                             Console.Clear();
-                                            Console.WriteLine("\n\t\t1) Белый");
-                                            Console.WriteLine("\t\t2) Красный");
-                                            Console.WriteLine("\t\t3) Зелёный");
-                                            Console.WriteLine("\t\t4) Голубой");
-                                            Console.WriteLine("\t\t5) Маджента");
-                                            Console.WriteLine("\t\t6) Радуга");
+                                            Console.WriteLine("\n\t\t1) Цвет змейки");
+                                            Console.WriteLine("\t\t2) Цвет границ");
                                             Console.WriteLine("\n\t\tНазад - любая клавиша");
                                             switch (Console.ReadKey(false).Key)
                                             {
                                                 case ConsoleKey.D1:
-                                                    Color.Color = ConsoleColor.White;
+                                                    Console.Clear();
+                                                    Console.WriteLine("\n\t\t1) Белый");
+                                                    Console.WriteLine("\t\t2) Красный");
+                                                    Console.WriteLine("\t\t3) Зелёный");
+                                                    Console.WriteLine("\t\t4) Голубой");
+                                                    Console.WriteLine("\t\t5) Маджента");
+                                                    Console.WriteLine("\t\t6) Радуга");
+                                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                                    switch (Console.ReadKey(false).Key)
+                                                    {
+                                                        case ConsoleKey.D1:
+                                                            SnakeColor.SetColor(ConsoleColor.White);
+                                                            break;
+                                                        case ConsoleKey.D2:
+                                                            SnakeColor.SetColor(ConsoleColor.Red);
+                                                            break;
+                                                        case ConsoleKey.D3:
+                                                            SnakeColor.SetColor(ConsoleColor.Green);
+                                                            break;
+                                                        case ConsoleKey.D4:
+                                                            SnakeColor.SetColor(ConsoleColor.Cyan);
+                                                            break;
+                                                        case ConsoleKey.D5:
+                                                            SnakeColor.SetColor(ConsoleColor.Magenta);
+                                                            break;
+                                                        case ConsoleKey.D6:
+                                                            SnakeColor.SetColor(ConsoleColor.Black);
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
                                                     break;
                                                 case ConsoleKey.D2:
-                                                    Color.Color = ConsoleColor.Red;
-                                                    break;
-                                                case ConsoleKey.D3:
-                                                    Color.Color = ConsoleColor.Green;
-                                                    break;
-                                                case ConsoleKey.D4:
-                                                    Color.Color = ConsoleColor.Cyan;
-                                                    break;
-                                                case ConsoleKey.D5:
-                                                    Color.Color = ConsoleColor.Magenta;
-                                                    break;
-                                                case ConsoleKey.D6:
-                                                    Color.Color = ConsoleColor.Black;
+                                                    Console.Clear();
+                                                    Console.WriteLine("\n\t\t1) Белый");
+                                                    Console.WriteLine("\t\t2) Красный");
+                                                    Console.WriteLine("\t\t3) Зелёный");
+                                                    Console.WriteLine("\t\t4) Голубой");
+                                                    Console.WriteLine("\t\t5) Маджента");
+                                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                                    switch (Console.ReadKey(false).Key)
+                                                    {
+                                                        case ConsoleKey.D1:
+                                                            BoundColor.SetColor(ConsoleColor.White);
+                                                            break;
+                                                        case ConsoleKey.D2:
+                                                            BoundColor.SetColor(ConsoleColor.Red);
+                                                            break;
+                                                        case ConsoleKey.D3:
+                                                            BoundColor.SetColor(ConsoleColor.Green);
+                                                            break;
+                                                        case ConsoleKey.D4:
+                                                            BoundColor.SetColor(ConsoleColor.Cyan);
+                                                            break;
+                                                        case ConsoleKey.D5:
+                                                            BoundColor.SetColor(ConsoleColor.Magenta);
+                                                            break;
+                                                        default:
+                                                            break;
+                                                    }
                                                     break;
                                                 default:
                                                     break;
