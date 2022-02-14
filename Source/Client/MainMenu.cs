@@ -6,8 +6,17 @@ using MultiplayerSnake.Shared;
 using System.IO;
 using System.Text;
 using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace MultiplayerSnake.Client;
+
+#region JsonTemplates
+class Response
+{
+    public Dictionary<string, string> Data { get; set; }
+    public int Statuscode { get; set; }
+}
+#endregion
 
 class MainMenu
 {
@@ -44,11 +53,11 @@ class MainMenu
         var client = new RestClient("http://localhost:5000/account/login/");
         var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
         var response = await client.PostAsync(request);
+        string jwt = JsonConvert.DeserializeObject<Response>(response.Content).Data["jwtToken"];
         string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\lolsquad\\MultiplayerSnake\\";
         Directory.CreateDirectory(path);
-        FileStream f = File.OpenWrite(path + "Jwt.json");
-        string jwt = JsonConvert.DeserializeObject<LoginResponseData>(response.Content).JwtToken;
-        f.Write(Encoding.UTF8.GetBytes(response.Content));
+        FileStream f = File.Create(path + "Jwt");
+        f.Write(Encoding.UTF8.GetBytes(jwt));
         f.Close();
     }
     public async Task RegisterMenuDraw()
