@@ -23,6 +23,8 @@ public class ValidationMiddleware
         string body = await Utillities.ReadRequestBodyAsync(context.Request);
         dto = JsonConvert.DeserializeObject<UserRegisterDto>(body);
 
+        context.Items["RegisterDto"] = dto;
+
         var result = await _validationManager.ValidateAsync(dto);
 
         if (!result.IsValid)
