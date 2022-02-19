@@ -96,14 +96,28 @@ class MainMenu
                         Console.Clear();
                         if (!Logedin)
                         {
-                            Console.WriteLine("\n\t\tНеобходимо зарегистрировать аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
+                            Console.WriteLine("\n\t\tНеобходимо зарегистрироваться или войти в аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
                             Console.ReadKey(false);
                         }
                         else // TODO
                         {
-                            Console.WriteLine("\n\t\tНеобходимо зарегистрировать аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
-                            Console.ReadKey(false);
-                        }
+                            Console.WriteLine("\n\t\t1) Создать\n\t\t1) Присоедениться\n\n\t\tНазад - любая клавиша");
+                            switch (Console.ReadKey(false).Key)
+                            {
+                                case ConsoleKey.D1:
+                                    Console.Clear();
+                                    // lobby create request
+                                    break;
+                                case ConsoleKey.D2:
+                                    Console.Clear();
+                                    Console.Write("\n\t\tВведите id лобби: ");
+                                    string id = Console.ReadLine();
+                                    // connect to lobby request
+                                    break;
+                                default:
+                                    break;
+                            }
+                            }
                         break;
                     case 3: // Account
                         Console.Clear();
