@@ -68,9 +68,22 @@ public class AccountController : ControllerBase
         user.Password = hashedPassword;
 
         await _context.Users.AddAsync(user);
-        await _context.SaveChangesAsync();
 
-        Console.WriteLine("HELLLOOOOOOO!!!!!");
+        try
+        {
+            await _context.SaveChangesAsync();
+        } 
+        catch
+        {
+            if((await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName)) != null)
+            {
+                return ResponseFail<FieldError>.Failed(new FieldError
+                {
+                    Field = nameof(dto.UserName),
+                    Message = "This UserName is already taken"
+                });
+            }
+        }
 
         return ResponseBase.Succeed();
     }
