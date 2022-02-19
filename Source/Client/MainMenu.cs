@@ -7,16 +7,10 @@ using System.IO;
 using System.Text;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using System.Net;
+using System.Linq;
 
 namespace MultiplayerSnake.Client;
-
-#region JsonTemplates
-class Response
-{
-    public Dictionary<string, string> Data { get; set; }
-    public int Statuscode { get; set; }
-}
-#endregion
 
 class MainMenu
 {
@@ -47,6 +41,14 @@ class MainMenu
         var client = new RestClient("http://localhost:5000/account/register/");
         var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
         var response = await client.PostAsync(request);
+
+        if(response.StatusCode == HttpStatusCode.BadRequest)
+        {
+            var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
+
+            var error = body.Errors.FirstOrDefault();
+
+        }
     }
     public async Task Login(string login, string password)
     {
