@@ -108,7 +108,6 @@ app.UseExceptionHandler(a =>
 
 app.UseConditionalMiddleware<ValidationMiddleware>(ApiEndpoints.AccountRoute);
 app.UseMiddleware<LoggingMiddleware>();
-app.UseHttpsRedirection();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<GameHub>("/hubs/gamehub");
