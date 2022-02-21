@@ -42,16 +42,17 @@ class MainMenu
         Console.WriteLine("penis1");
         var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
         Console.WriteLine("penis2");
-        var response = await client.PostAsync(request);
+        var response = await client.ExecutePostAsync(request);
         Console.WriteLine("penis3 " + response.StatusCode);
-
 
         if (response.StatusCode == HttpStatusCode.BadRequest)
         {
+            Console.WriteLine("Response: " + response.Content);
+
+
             var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
 
-            var error = body.Errors.FirstOrDefault().Message;
-            Console.WriteLine("\n\t\tError: " + error);
+            Console.WriteLine("Body: " + body.Errors.First().Message);
         }
     }
     public async Task Login(string login, string password)
@@ -59,6 +60,7 @@ class MainMenu
         var client = new RestClient("http://localhost:5000/account/login/");
         var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
         var response = await client.PostAsync(request);
+
         string jwt = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
         string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\lolsquad\\MultiplayerSnake\\";
         Directory.CreateDirectory(path);
