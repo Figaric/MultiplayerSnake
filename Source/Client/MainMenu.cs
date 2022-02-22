@@ -23,6 +23,7 @@ class MainMenu
     public ColorManager SnakeColor;
     public ColorManager BoundColor;
     private string login, password;
+    public Account UserAccount;
 
     public MainMenu()
     {
@@ -30,43 +31,11 @@ class MainMenu
         kch = new Thread(keyCheck); kch.Start();
         SnakeColor = new ColorManager();
         BoundColor = new ColorManager();
+        UserAccount = new Account();
         while (true)
         {
-            DrawMainMenu();
+            _ = DrawMainMenu();
         }
-    }
-
-    public async Task Register(string login, string password)
-    {
-        var client = new RestClient("http://localhost:5000/account/register/");
-        Console.WriteLine("penis1");
-        var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
-        Console.WriteLine("penis2");
-        var response = await client.ExecutePostAsync(request);
-        Console.WriteLine("penis3 " + response.StatusCode);
-
-        if (response.StatusCode == HttpStatusCode.BadRequest)
-        {
-            Console.WriteLine("Response: " + response.Content);
-
-
-            var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
-
-            Console.WriteLine("Body: " + body.Errors.First().Message);
-        }
-    }
-    public async Task Login(string login, string password)
-    {
-        var client = new RestClient("http://localhost:5000/account/login/");
-        var request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
-        var response = await client.PostAsync(request);
-
-        string jwt = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
-        string path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\lolsquad\\MultiplayerSnake\\";
-        Directory.CreateDirectory(path);
-        FileStream f = File.Create(path + "Jwt");
-        f.Write(Encoding.UTF8.GetBytes(jwt));
-        f.Close();
     }
 
     public async Task DrawMainMenu()
@@ -86,184 +55,181 @@ class MainMenu
             Console.WriteLine("\t4) Помощь");
             Console.ResetColor();
             Console.Write("\nВыберите одну из опций выше: ");
-            try
+
+            switch (Console.ReadKey(false).Key)
             {
-                switch (Userinput = int.Parse(Console.ReadLine()))
-                {
-                    case 1: // Single player
-                        s = new Snake(20, SnakeColor, BoundColor);
-                        IsAlive = true;
-                        break;
-                    case 2: // Multiplayer
-                        Console.Clear();
-                        if (!Logedin)
+                case ConsoleKey.D1: // Single player
+                    s = new Snake(20, SnakeColor, BoundColor);
+                    IsAlive = true;
+                    break;
+                case ConsoleKey.D2: // Multiplayer
+                    Console.Clear();
+                    if (UserAccount.Logon)
+                    {
+                        Console.WriteLine("\n\t\t1) Создать\n\t\t1) Присоедениться\n\n\t\tНазад - любая клавиша");
+                        switch (Console.ReadKey(false).Key)
                         {
-                            Console.WriteLine("\n\t\tНеобходимо зарегистрироваться или войти в аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
-                            Console.ReadKey(false);
+                            case ConsoleKey.D1:
+                                Console.Clear();
+                                // lobby create request
+                                break;
+                            case ConsoleKey.D2:
+                                Console.Clear();
+                                Console.Write("\n\t\tВведите id лобби: ");
+                                string id = Console.ReadLine();
+                                // connect to lobby request
+                                break;
+                            default:
+                                break;
                         }
-                        else // TODO
-                        {
-                            Console.WriteLine("\n\t\t1) Создать\n\t\t1) Присоедениться\n\n\t\tНазад - любая клавиша");
-                            switch (Console.ReadKey(false).Key)
-                            {
-                                case ConsoleKey.D1:
-                                    Console.Clear();
-                                    // lobby create request
-                                    break;
-                                case ConsoleKey.D2:
-                                    Console.Clear();
-                                    Console.Write("\n\t\tВведите id лобби: ");
-                                    string id = Console.ReadLine();
-                                    // connect to lobby request
-                                    break;
-                                default:
-                                    break;
-                            }
-                            }
-                        break;
-                    case 3: // Account
-                        Console.Clear();
-                        if (Logedin)
-                        {
-                            Console.WriteLine("\n\t\t1) Настройки\n\t\t2) Статистика\n\n\t\tНазад - любая клавиша");
-                            switch (Console.ReadKey(false).Key)
-                            {
-                                case ConsoleKey.D1:
-                                    Console.Clear();
-                                    Console.WriteLine("\n\t\t1) Выбор цвета\n\t\t2) Сброс\n\n\t\tНазад - любая клавиша"); // TODO clear data
-                                    switch (Console.ReadKey(false).Key)
-                                    {
-                                        case ConsoleKey.D1:
-                                            Console.Clear();
-                                            Console.WriteLine("\n\t\t1) Цвет змейки\n\t\t2) Цвет границ\n\n\t\tНазад - любая клавиша");
-                                            switch (Console.ReadKey(false).Key)
-                                            {
-                                                case ConsoleKey.D1:
-                                                    Console.Clear();
-                                                    Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\t\t6) Радуга\n\n\t\tНазад - любая клавиша");
-                                                    switch (Console.ReadKey(false).Key)
-                                                    {
-                                                        case ConsoleKey.D1:
-                                                            SnakeColor.SetColor(ConsoleColor.White);
-                                                            break;
-                                                        case ConsoleKey.D2:
-                                                            SnakeColor.SetColor(ConsoleColor.Red);
-                                                            break;
-                                                        case ConsoleKey.D3:
-                                                            SnakeColor.SetColor(ConsoleColor.Green);
-                                                            break;
-                                                        case ConsoleKey.D4:
-                                                            SnakeColor.SetColor(ConsoleColor.Cyan);
-                                                            break;
-                                                        case ConsoleKey.D5:
-                                                            SnakeColor.SetColor(ConsoleColor.Magenta);
-                                                            break;
-                                                        case ConsoleKey.D6:
-                                                            SnakeColor.SetColor(ConsoleColor.Black);
-                                                            break;
-                                                        default:
-                                                            break;
-                                                    }
-                                                    break;
-                                                case ConsoleKey.D2:
-                                                    Console.Clear();
-                                                    Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\n\t\tНазад - любая клавиша");
-                                                    switch (Console.ReadKey(false).Key)
-                                                    {
-                                                        case ConsoleKey.D1:
-                                                            BoundColor.SetColor(ConsoleColor.White);
-                                                            break;
-                                                        case ConsoleKey.D2:
-                                                            BoundColor.SetColor(ConsoleColor.Red);
-                                                            break;
-                                                        case ConsoleKey.D3:
-                                                            BoundColor.SetColor(ConsoleColor.Green);
-                                                            break;
-                                                        case ConsoleKey.D4:
-                                                            BoundColor.SetColor(ConsoleColor.Cyan);
-                                                            break;
-                                                        case ConsoleKey.D5:
-                                                            BoundColor.SetColor(ConsoleColor.Magenta);
-                                                            break;
-                                                        default:
-                                                            break;
-                                                    }
-                                                    break;
-                                                default:
-                                                    break;
-                                            }
-                                            break;
-                                        default:
-                                            break;
-                                    }
-                                    break;
-                                case ConsoleKey.D2:
-                                    Console.Clear();
-                                    Console.WriteLine("\n\t\tИгр сыграно:             stat" +
-                                        "\n\t\tМаксимальный счёт:       stat" +
-                                        "\n\t\tВсего съедено:           stat" +
-                                        "\n\t\tОбщий размер змейки:     stat" +
-                                        "\n\n\t\tПобед в мултиплеере:     stat" +
-                                        "\n\t\tПоражений в мултиплеере: stat" +
-                                        "\n\t\tВинрейт:                 stat" +
-                                        "\n\n\t\t1) Достижения" +
-                                        "\n\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        else
-                        {
-                            Console.WriteLine("\n\t\t1) Зарегистрироваться\n\t\t2) Войти\n\n\t\tНазад - любая клавиша");
-                            switch (Console.ReadKey(false).Key)
-                            {
-                                case ConsoleKey.D1:
-                                    Console.Clear();
-                                    Console.Write("\n\tВведите логин: ");
-                                    login = Console.ReadLine();
-                                    Console.Write("\n\tВведите пароль: ");
-                                    password = Console.ReadLine();
-
-                                    Console.Clear();
-                                    await Register(login, password);
-                                    Thread.Sleep(100);
-                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
-                                    break;
-                                case ConsoleKey.D2:
-                                    Console.Clear();
-                                    Console.Write("\n\tВведите логин: ");
-                                    login = Console.ReadLine();
-                                    Console.Write("\n\tВведите пароль: ");
-                                    password = Console.ReadLine();
-
-                                    Console.Clear();
-                                    await Login(login, password);
-                                    Thread.Sleep(100);
-                                    Console.WriteLine("\n\t\tНазад - любая клавиша");
-                                    Console.ReadKey(false);
-                                    break;
-                                default:
-                                    break;
-                            }
-                        }
-                        break;
-                    case 4: // Help
-                        Console.Clear();
-                        Console.WriteLine("\n\t\tУправление -  wasd / стрелочки\n\t\tВыход во время игры - Q\n\n\t\tНазад - любая клавиша");
+                        
+                    }
+                    else 
+                    {
+                        Console.WriteLine("\n\t\tНеобходимо зарегистрироваться или войти в аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
                         Console.ReadKey(false);
-                        break;
-                    default:
-                        break;
-                }
+                    }
+                    break;
+                case ConsoleKey.D3: // Account
+                    Console.Clear();
+                    if (UserAccount.Logon)
+                    {
+                        Console.WriteLine("\n\t\t1) Настройки\n\t\t2) Статистика\n\n\t\tНазад - любая клавиша");
+                        switch (Console.ReadKey(false).Key)
+                        {
+                            case ConsoleKey.D1:
+                                Console.Clear();
+                                Console.WriteLine("\n\t\t1) Выбор цвета\n\t\t2) Сброс\n\n\t\tНазад - любая клавиша"); // TODO clear data
+                                switch (Console.ReadKey(false).Key)
+                                {
+                                    case ConsoleKey.D1:
+                                        Console.Clear();
+                                        Console.WriteLine("\n\t\t1) Цвет змейки\n\t\t2) Цвет границ\n\n\t\tНазад - любая клавиша");
+                                        switch (Console.ReadKey(false).Key)
+                                        {
+                                            case ConsoleKey.D1:
+                                                Console.Clear();
+                                                Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\t\t6) Радуга\n\n\t\tНазад - любая клавиша");
+                                                switch (Console.ReadKey(false).Key)
+                                                {
+                                                    case ConsoleKey.D1:
+                                                        SnakeColor.SetColor(ConsoleColor.White);
+                                                        break;
+                                                    case ConsoleKey.D2:
+                                                        SnakeColor.SetColor(ConsoleColor.Red);
+                                                        break;
+                                                    case ConsoleKey.D3:
+                                                        SnakeColor.SetColor(ConsoleColor.Green);
+                                                        break;
+                                                    case ConsoleKey.D4:
+                                                        SnakeColor.SetColor(ConsoleColor.Cyan);
+                                                        break;
+                                                    case ConsoleKey.D5:
+                                                        SnakeColor.SetColor(ConsoleColor.Magenta);
+                                                        break;
+                                                    case ConsoleKey.D6:
+                                                        SnakeColor.SetColor(ConsoleColor.Black);
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                break;
+                                            case ConsoleKey.D2:
+                                                Console.Clear();
+                                                Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\n\t\tНазад - любая клавиша");
+                                                switch (Console.ReadKey(false).Key)
+                                                {
+                                                    case ConsoleKey.D1:
+                                                        BoundColor.SetColor(ConsoleColor.White);
+                                                        break;
+                                                    case ConsoleKey.D2:
+                                                        BoundColor.SetColor(ConsoleColor.Red);
+                                                        break;
+                                                    case ConsoleKey.D3:
+                                                        BoundColor.SetColor(ConsoleColor.Green);
+                                                        break;
+                                                    case ConsoleKey.D4:
+                                                        BoundColor.SetColor(ConsoleColor.Cyan);
+                                                        break;
+                                                    case ConsoleKey.D5:
+                                                        BoundColor.SetColor(ConsoleColor.Magenta);
+                                                        break;
+                                                    default:
+                                                        break;
+                                                }
+                                                break;
+                                            default:
+                                                break;
+                                        }
+                                        break;
+                                    default:
+                                        break;
+                                }
+                                break;
+                            case ConsoleKey.D2:
+                                Console.Clear();
+                                Console.WriteLine("\n\t\tИгр сыграно:             stat" +
+                                    "\n\t\tМаксимальный счёт:       stat" +
+                                    "\n\t\tВсего съедено:           stat" +
+                                    "\n\t\tОбщий размер змейки:     stat" +
+                                    "\n\n\t\tПобед в мултиплеере:     stat" +
+                                    "\n\t\tПоражений в мултиплеере: stat" +
+                                    "\n\t\tВинрейт:                 stat" +
+                                    "\n\n\t\t1) Достижения" +
+                                    "\n\n\t\tНазад - любая клавиша");
+                                Console.ReadKey(false);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        Console.WriteLine("\n\t\t1) Зарегистрироваться\n\t\t2) Войти\n\n\t\tНазад - любая клавиша");
+                        switch (Console.ReadKey(false).Key)
+                        {
+                            case ConsoleKey.D1:
+                                Console.Clear();
+                                Console.Write("\n\tВведите логин: ");
+                                login = Console.ReadLine();
+                                Console.Write("\n\tВведите пароль: ");
+                                password = Console.ReadLine();
 
-            }
-            catch (System.FormatException)
-            {
-                Console.WriteLine("Это даже не число, олень ты e#@!ный");
-                Console.ReadKey();
+                                Console.Clear();
+                                await UserAccount.Register(login, password);
+                                Thread.Sleep(100);
+                                Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                Console.ReadKey(false);
+                                break;
+                            case ConsoleKey.D2:
+                                Console.Clear();
+                                Console.Write("\n\tВведите логин: ");
+                                login = Console.ReadLine();
+                                Console.Write("\n\tВведите пароль: ");
+                                password = Console.ReadLine();
+
+                                Console.Clear();
+                                await UserAccount.Login(login, password);
+                                Thread.Sleep(100);
+                                Console.WriteLine("\n\t\tНазад - любая клавиша");
+                                Console.ReadKey(false);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                    break;
+                case ConsoleKey.D4: // Help
+                    Console.Clear();
+                    Console.WriteLine("\n\t\tУправление -  wasd / стрелочки\n\t\tВыход во время игры - Q\n\n\t\tНазад - любая клавиша");
+                    Console.ReadKey(false);
+                    break;
+                case ConsoleKey.Q: // Quit
+                    Console.WriteLine("Shutting down...");
+                    Environment.Exit(0);
+                    break;
+                default:
+                    break;
             }
         }
     }
