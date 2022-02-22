@@ -1,11 +1,14 @@
 using MultiplayerSnake.Server;
 using System.Reflection;
+using Microsoft.AspNetCore.SignalR;
 
 var builder = WebApplication.CreateBuilder(args);
 
 #region Configure services
 
-// Map jwt settings from appsettings.json to the JwtSettings type
+builder.Services.AddSignalR();
+
+// Map jwt settings from appsettings.json to the JwtSettings object
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
 // Register controllers with needed filters
@@ -30,6 +33,7 @@ var app = builder.Build();
 
 app.UseAuthorization();
 app.MapControllers();
+app.MapHub<GameHub>("/hubs/gamehub");
 
 #endregion
 
