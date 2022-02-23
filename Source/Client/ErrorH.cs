@@ -55,7 +55,7 @@ namespace MultiplayerSnake.Client
                     break;
             }
             Console.ResetColor();
-            Console.WriteLine("\n\t\tНазад - любая клавиша");
+            Console.WriteLine("\n\t\tДалее - любая клавиша");
         }
 
         public void MarkField(bool loginField)
@@ -65,13 +65,12 @@ namespace MultiplayerSnake.Client
                 case Errors.UserAlreadyExists:
                     if (loginField)
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("\n\tВведите ");
                         Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("логин");
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.Write(": ");
                         Console.ResetColor();
+                        Console.Write(": ");
                     }
                     else
                     {
@@ -81,13 +80,12 @@ namespace MultiplayerSnake.Client
                 case Errors.SuchUserDoesNotExist:
                     if (loginField)
                     {
-                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("\n\tВведите ");
                         Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("логин");
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.Write(": ");
                         Console.ResetColor();
+                        Console.Write(": ");
                     }
                     else
                     {
@@ -103,10 +101,10 @@ namespace MultiplayerSnake.Client
                     {
                         Console.Write("\n\tВведите ");
                         Console.BackgroundColor = ConsoleColor.Red;
+                        Console.ForegroundColor = ConsoleColor.White;
                         Console.Write("пароль");
-                        Console.BackgroundColor = ConsoleColor.Black;
-                        Console.Write(": ");
                         Console.ResetColor();
+                        Console.Write(": ");
                     }
                     break;
                 case Errors.Success:
