@@ -6,6 +6,7 @@ using System.IO;
 using System.Linq;
 using System.Net;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace MultiplayerSnake.Client
@@ -16,6 +17,7 @@ namespace MultiplayerSnake.Client
         public string Nickname { get; private set; }
         public string Path { get; }
         public bool Logon { get; private set; }
+        public ErrorH Error { get; set; }
 
         public Account()
         {
@@ -23,6 +25,8 @@ namespace MultiplayerSnake.Client
             Directory.CreateDirectory(Path);
             Logon = false;
             _ = LoadToken();
+            Error = new ErrorH();
+            Error.CurrentError = Errors.Success;
         }
 
         public async Task Register(string login, string password)
@@ -33,12 +37,16 @@ namespace MultiplayerSnake.Client
 
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                Console.WriteLine("Response: " + response.Content);
-
-
-                var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
-
-                Console.WriteLine("Body: " + body.Errors.First().Message);
+                var body = JsonConvert.DeserializeObject<ResponseError>(response.Content);
+                if (body.Errors.ToArray()[0].Message == "This UserName is already taken")
+                {
+                    Error.CurrentError = Errors.UserAlreadyExists;
+                    Error.Print(false);
+                }
+            }
+            else
+            {
+                Error.CurrentError = Errors.Success;
             }
         }
 
@@ -46,18 +54,37 @@ namespace MultiplayerSnake.Client
         {
             RestClient client = new RestClient("http://localhost:5000/account/login/");
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
-            RestResponse response = await client.PostAsync(request);
-            JwtToken = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
-            Logon = true;
+            RestResponse response = await client.ExecutePostAsync(request);
 
-            await SaveToken(JwtToken);
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                var body = JsonConvert.DeserializeObject<ResponseError>(response.Content);
+                if (body.Errors[0].Message == "Such user does not exist")
+                {
+                    Error.CurrentError = Errors.SuchUserDoesNotExist;
+                    Error.Print(true);
+                }
+                else if (body.Errors[0].Message == "Invalid password")
+                {
+                    Error.CurrentError = Errors.InvalidPassword;
+                    Error.Print(true);
+                }
+            }
+            else
+            {
+                Error.CurrentError = Errors.Success;
+                Error.Print(true);
+                JwtToken = JsonConvert.DeserializeObject<ResponseSuccess>(response.Content).Data.JwtToken;
+                await SaveToken(JwtToken);
+            }
         }
 
         public async Task SaveToken(string token)
         {
             FileStream f = File.Create(Path + "Jwt");
-            await f.WriteAsync(Encoding.UTF8.GetBytes(token));
+            f.Write(Encoding.UTF8.GetBytes(token));
             f.Close();
+            Logon = true;
         }
         public async Task LoadToken()
         {
