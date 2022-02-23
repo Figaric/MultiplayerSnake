@@ -54,7 +54,7 @@ class Snake
         {
             for (int j = 0; j < MapSize + 1; j++)
             {
-                if (Map[i, j] == '*')
+                if (Map[i, j] == 'S')
                 {
                     Console.ForegroundColor = SnakeColor.ReturnColor();
                     Console.Write(Map[i, j]);
@@ -149,7 +149,7 @@ class Snake
                         if (food.X == part.X && food.Y == part.Y) // If snake eats food
                         {
                             FoodCoords.Remove(food);
-                            Map[food.X, food.Y] = '*'; // Render snake's chunk at food coords
+                            Map[food.X, food.Y] = 'S'; // Render snake's chunk at food coords
                             SnakeGrowth();
                             Score++;
                             return;
@@ -157,7 +157,7 @@ class Snake
                     }
                     if (i == part.X && j == part.Y) // Render snake chunks
                     {
-                        Map[i, j] = '*';
+                        Map[i, j] = 'S';
                     }
                 }
             }
