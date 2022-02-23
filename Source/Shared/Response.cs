@@ -21,7 +21,7 @@ namespace MultiplayerSnake.Shared
 
     public class ResponseFail<TError> : ResponseBase, IResponse
     {
-        public IEnumerable<TError> Errors { get; private set; }
+        public IList<TError> Errors { get; set; }
 
         public static IResponse Failed(HttpStatusCode statusCode = HttpStatusCode.BadRequest)
             => new ResponseFail<TError> { StatusCode = statusCode };
@@ -29,13 +29,13 @@ namespace MultiplayerSnake.Shared
         public static IResponse Failed(TError error, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
             => new ResponseFail<TError> { Errors = new List<TError> { error }, StatusCode = statusCode };
 
-        public static IResponse Failed(IEnumerable<TError> errors, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
+        public static IResponse Failed(IList<TError> errors, HttpStatusCode statusCode = HttpStatusCode.BadRequest)
             => new ResponseFail<TError> { Errors = errors, StatusCode = statusCode };
     }
 
     public class ResponseData<TData> : ResponseBase, IResponse
     {
-        public TData Data { get; private set; }
+        public TData Data { get; set; }
 
         public static IResponse Succeed(TData data, HttpStatusCode statusCode = HttpStatusCode.OK)
             => new ResponseData<TData> { Data = data, StatusCode = statusCode };
