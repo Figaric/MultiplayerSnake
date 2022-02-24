@@ -10,9 +10,9 @@ namespace MultiplayerSnake.Server
     {
         private readonly ILogger<GameHub> _logger;
 
-        private readonly IRoomManager _roomManager;
+        private readonly RoomManager _roomManager;
 
-        public GameHub(ILogger<GameHub> logger, IRoomManager roomManager)
+        public GameHub(ILogger<GameHub> logger, RoomManager roomManager)
         {
             _logger = logger;
             _roomManager = roomManager;
@@ -31,8 +31,7 @@ namespace MultiplayerSnake.Server
             string roomId = Guid.NewGuid().ToString();
 
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            _roomManager.AddRoom(roomId);
-            _roomManager.AddToRoom(roomId, new Player());
+            _roomManager.CreateRoom(roomId, Context.User.Identity.Name);
 
             await Clients.Caller.SendAsync(HubMethods.RoomCreated, roomId);
         }
@@ -41,6 +40,7 @@ namespace MultiplayerSnake.Server
         public async Task JoinRoom(string roomId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+
             await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.RoomJoined, Context.User.Identity.Name);
         }
 
@@ -50,6 +50,12 @@ namespace MultiplayerSnake.Server
             var rooms = _roomManager.GetRooms(page);
 
             await Clients.Caller.SendAsync(HubMethods.RoomsReceived, rooms);
+        }
+
+        [HubMethodName(HubMethods.SendPos)]
+        public async Task SendPos(string roomId, SnakeBase pos)
+        {
+            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.PosSent, pos);
         }
     }
 }

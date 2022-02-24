@@ -19,5 +19,9 @@ namespace MultiplayerSnake.Shared
         public const string GetRooms = "GetRooms";
 
         public const string RoomsReceived = "RoomsReceived";
+
+        public const string SendPos = "SendPosition";
+
+        public const string PosSent = "PositionSent";
     }
 }

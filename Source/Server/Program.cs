@@ -28,7 +28,7 @@ builder.Services.AddJwtAuthentication();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
-builder.Services.AddScoped<IRoomManager, RoomManager>();
+builder.Services.AddScoped<RoomManager>();
 
 #endregion
 

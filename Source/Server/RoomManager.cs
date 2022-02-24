@@ -2,16 +2,7 @@
 
 namespace MultiplayerSnake.Server
 {
-    public interface IRoomManager
-    {
-        IList<Room> GetRooms(int cursor);
-
-        void AddRoom(string id);
-
-        void AddToRoom(string roomId, Player player);
-    }
-
-    public class RoomManager : IRoomManager
+    public class RoomManager
     {
         public IList<Room> Rooms { get; set; }
 
@@ -20,35 +11,20 @@ namespace MultiplayerSnake.Server
             Rooms = new List<Room>();
         }
 
-        public void AddRoom(string id)
+        public async void CreateRoom(string roomId, string hostName)
         {
-            Rooms.Add(new Room
+            Room room = new Room
             {
-                Id = id
-            });
+                Id = roomId,
+                HostName = hostName,
+            };
         }
 
-        public void AddToRoom(string roomId, Player player)
+        public IEnumerable<Room> GetRooms(int page)
         {
-            var room = Rooms.FirstOrDefault(r => r.Id == roomId);
-
-            if(room is null)
-            {
-                // TODO: throw not found error
-                return;
-            }
-
-            room.Players.Add(player);
-        }
-
-        public IList<Room> GetRooms(int page)
-        {
-            IList<Room> roomsToReturn = Rooms
-                .Skip(page * 5)
-                .Take(5)
-                .ToList();
-
-            return roomsToReturn;
+            return Rooms.ToList()
+                .Skip(5 * page)
+                .Take(5);
         }
     }
 }
