@@ -8,12 +8,11 @@ using System.Net;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-
 namespace MultiplayerSnake.Client
 {
     class Account
     {
-        public string JwtToken { get; private set; }
+        public string? JwtToken { get; private set; }
         public string Nickname { get; private set; }
         public string Path { get; }
         public bool Logon { get; private set; }
@@ -24,6 +23,7 @@ namespace MultiplayerSnake.Client
             Path = $"{Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData)}\\lolsquad\\MultiplayerSnake\\";
             Directory.CreateDirectory(Path);
             Logon = false;
+            JwtToken = null;
             _ = LoadToken();
             Error = new ErrorH();
             Error.CurrentError = Errors.Success;
@@ -35,9 +35,9 @@ namespace MultiplayerSnake.Client
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            if (!response.IsSuccessful)
             {
-                var body = JsonConvert.DeserializeObject<ResponseError>(response.Content);
+                var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
                 if (body.Errors.ToArray()[0].Message == "This UserName is already taken")
                 {
                     Error.CurrentError = Errors.UserAlreadyExists;
@@ -56,9 +56,9 @@ namespace MultiplayerSnake.Client
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
-            if (response.StatusCode == HttpStatusCode.BadRequest)
+            if (!response.IsSuccessful)
             {
-                var body = JsonConvert.DeserializeObject<ResponseError>(response.Content);
+                var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
                 if (body.Errors[0].Message == "Such user does not exist")
                 {
                     Error.CurrentError = Errors.SuchUserDoesNotExist;
@@ -74,7 +74,7 @@ namespace MultiplayerSnake.Client
             {
                 Error.CurrentError = Errors.Success;
                 Error.Print(true);
-                JwtToken = JsonConvert.DeserializeObject<ResponseSuccess>(response.Content).Data.JwtToken;
+                JwtToken = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
                 await SaveToken(JwtToken);
             }
         }
@@ -96,7 +96,24 @@ namespace MultiplayerSnake.Client
                 JwtToken = Encoding.UTF8.GetString(data);
                 Logon = true;
             }
+            else
+            {
+                JwtToken = null;
+                Logon = false;
+            }
             f.Close();
+        }
+
+        public async Task Logout()
+        {
+            File.Delete(Path + "Jwt");
+            JwtToken = null;
+            Logon = false;
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.BackgroundColor = ConsoleColor.Green;
+            Console.WriteLine("\n\t\tВы успешно вышли из аккаунта");
+            Console.ResetColor();
+            Console.WriteLine("\n\t\tДалее - любая клавиша");
         }
     }
 }

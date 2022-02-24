@@ -92,7 +92,7 @@ class MainMenu
                     Console.Clear();
                     if (UserAccount.Logon)
                     {
-                        Console.WriteLine("\n\t\t1) Настройки\n\t\t2) Статистика\n\n\t\tНазад - любая клавиша");
+                        Console.WriteLine("\n\t\t1) Настройки\n\t\t2) Статистика\n\t\t3) Выйти из аккаунта\n\n\t\tНазад - любая клавиша");
                         switch (Console.ReadKey(true).Key)
                         {
                             case ConsoleKey.D1:
@@ -177,6 +177,11 @@ class MainMenu
                                     "\n\n\t\tНазад - любая клавиша");
                                 Console.ReadKey(false);
                                 break;
+                            case ConsoleKey.D3:
+                                Console.Clear();
+                                UserAccount.Logout();
+                                Console.ReadKey(true);
+                                break;
                             default:
                                 break;
                         }
@@ -188,21 +193,20 @@ class MainMenu
                         {
                             case ConsoleKey.D1:
                                 Console.Clear();
-                                Console.Write("\n\tВведите логин: ");
+                                UserAccount.Error.MarkField(true);
                                 login = Console.ReadLine();
-                                Console.Write("\n\tВведите пароль: ");
+                                UserAccount.Error.MarkField(false);
                                 password = Console.ReadLine();
 
                                 Console.Clear();
                                 UserAccount.Register(login, password).GetAwaiter();
-                                Console.WriteLine("\n\t\tНазад - любая клавиша");
                                 Console.ReadKey(true);
                                 break;
                             case ConsoleKey.D2:
                                 Console.Clear();
-                                Console.Write("\n\tВведите логин: ");
+                                UserAccount.Error.MarkField(true);
                                 login = Console.ReadLine();
-                                Console.Write("\n\tВведите пароль: ");
+                                UserAccount.Error.MarkField(false);
                                 password = Console.ReadLine();
 
                                 UserAccount.Login(login, password).GetAwaiter();
@@ -215,7 +219,7 @@ class MainMenu
                     break;
                 case ConsoleKey.D4: // Help
                     Console.Clear();
-                    Console.WriteLine("\n\t\tУправление -  wasd / стрелочки\n\t\tВыход во время игры - Q\n\n\t\tНазад - любая клавиша");
+                    Console.WriteLine("\n\t\tУправление - wasd / стрелочки\n\t\tВыход      - Q\n\n\t\tНазад - любая клавиша");
                     Console.ReadKey(true);
                     break;
                 case ConsoleKey.Q: // Quit
