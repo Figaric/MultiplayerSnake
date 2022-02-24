@@ -24,17 +24,24 @@ class Snake
     #region Constructor
     public Snake(int x, ColorManager s, ColorManager b)
     {
+        Console.Clear();
+        Console.CursorVisible = false;
         Direction = 0;
         Map = new char[x, x];
         MapSize = (int)Math.Sqrt(Map.Length) - 1;
         for (int i = 0; i < MapSize; i++) // Generating map bounds
         {
-            Map[0, i] = '#';
-            Map[i, 0] = '#';
-            Map[MapSize, i] = '#';
-            Map[i, MapSize] = '#';
+            Console.SetCursorPosition(0, i);
+            Console.Write("#");
+            Console.SetCursorPosition(i, 0);
+            Console.Write("#");
+            Console.SetCursorPosition(MapSize, i);
+            Console.Write("#");
+            Console.SetCursorPosition(i, MapSize);
+            Console.Write("#");
         }
-        Map[MapSize, MapSize] = '#';
+        Console.SetCursorPosition(MapSize, MapSize);
+        Console.Write("#");
         SParts = new List<Point>() { new Point((MapSize + 1) / 2, (MapSize + 1) / 2) };
         FoodCoords = new List<Point>() { };
         Score = 0;
@@ -43,37 +50,41 @@ class Snake
         IsAlive = true;
         SnakeColor = s;
         BoundColor = b;
+        Console.SetCursorPosition(0, 20);
+        Console.WriteLine($"Score: {Score}");
     }
     #endregion
 
     #region Funcs
     public void Draw()
     {
-        Console.Clear();
-        for (int i = 0; i < MapSize + 1; i++) //  Ingame ui
+        for (int i = 1; i < MapSize; i++) //  Ingame ui
         {
-            for (int j = 0; j < MapSize + 1; j++)
+            for (int j = 1; j < MapSize; j++)
             {
                 if (Map[i, j] == 'S')
                 {
                     Console.ForegroundColor = SnakeColor.ReturnColor();
+                    Console.SetCursorPosition(j, i);
                     Console.Write(Map[i, j]);
                     Console.ResetColor();
                 }
-                else if (Map[i, j] == '#')
-                {
-                    Console.ForegroundColor = BoundColor.ReturnColor();
-                    Console.Write(Map[i, j]);
-                    Console.ResetColor();
-                }
+                //else if (Map[i, j] == '#')
+                //{
+                //    Console.ForegroundColor = BoundColor.ReturnColor();
+                //    Console.Write(Map[i, j]);
+                //    Console.ResetColor();
+                //}
                 else
                 {
+                    Console.SetCursorPosition(j, i);
                     Console.Write(Map[i, j]);
                 }
             }
             Console.Write("\n");
         }
-        Console.WriteLine($"Score: {Score}");
+        Console.SetCursorPosition(7, 20);
+        Console.WriteLine(Score);
     }
     public void Update()
     {
