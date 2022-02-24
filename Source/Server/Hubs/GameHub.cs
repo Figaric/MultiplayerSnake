@@ -10,9 +10,12 @@ namespace MultiplayerSnake.Server
     {
         private readonly ILogger<GameHub> _logger;
 
-        public GameHub(ILogger<GameHub> logger)
+        private readonly IRoomManager _roomManager;
+
+        public GameHub(ILogger<GameHub> logger, IRoomManager roomManager)
         {
             _logger = logger;
+            _roomManager = roomManager;
         }
 
         public override Task OnConnectedAsync()
@@ -22,15 +25,31 @@ namespace MultiplayerSnake.Server
             return base.OnConnectedAsync();
         }
 
+        [HubMethodName(HubMethods.CreateRoom)]
         public async Task CreateRoom()
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, Guid.NewGuid().ToString());
-            await Clients.Caller.SendAsync("CreatedRoom", true);
+            string roomId = Guid.NewGuid().ToString();
+
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            _roomManager.AddRoom(roomId);
+            _roomManager.AddToRoom(roomId, new Player());
+
+            await Clients.Caller.SendAsync(HubMethods.RoomCreated, roomId);
         }
 
+        [HubMethodName(HubMethods.JoinRoom)]
         public async Task JoinRoom(string roomId)
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.RoomJoined, Context.User.Identity.Name);
+        }
+
+        [HubMethodName(HubMethods.GetRooms)]
+        public async Task GetRooms(int page)
+        {
+            var rooms = _roomManager.GetRooms(page);
+
+            await Clients.Caller.SendAsync(HubMethods.RoomsReceived, rooms);
         }
     }
 }

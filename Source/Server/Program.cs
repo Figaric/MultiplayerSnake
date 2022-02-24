@@ -8,6 +8,9 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddSignalR();
 
+// Add custom logging configuration
+builder.AddLogging();
+
 // Map jwt settings from appsettings.json to the JwtSettings object
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
 
@@ -24,6 +27,8 @@ builder.Services.AddDatabase();
 builder.Services.AddJwtAuthentication();
 
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+
+builder.Services.AddScoped<IRoomManager, RoomManager>();
 
 #endregion
 
