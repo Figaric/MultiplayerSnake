@@ -12,7 +12,7 @@ namespace MultiplayerSnake.Client
 {
     class Account
     {
-        public string? JwtToken { get; private set; }
+        public string JwtToken { get; private set; }
         public string Nickname { get; private set; }
         public string Path { get; }
         public bool Logon { get; private set; }
@@ -35,7 +35,12 @@ namespace MultiplayerSnake.Client
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
-            if (!response.IsSuccessful)
+            if (response.IsSuccessful)
+            {
+                Error.CurrentError = Errors.Success;
+                await Login(login, password);
+            }
+            else
             {
                 var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
                 if (body.Errors.ToArray()[0].Message == "This UserName is already taken")
@@ -43,10 +48,6 @@ namespace MultiplayerSnake.Client
                     Error.CurrentError = Errors.UserAlreadyExists;
                     Error.Print(false);
                 }
-            }
-            else
-            {
-                Error.CurrentError = Errors.Success;
             }
         }
 
@@ -56,7 +57,14 @@ namespace MultiplayerSnake.Client
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
-            if (!response.IsSuccessful)
+            if (response.IsSuccessful)
+            {
+                Error.CurrentError = Errors.Success;
+                Error.Print(true);
+                JwtToken = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
+                await SaveToken(JwtToken);
+            }
+            else
             {
                 var body = JsonConvert.DeserializeObject<ResponseFail<FieldError>>(response.Content);
                 if (body.Errors[0].Message == "Such user does not exist")
@@ -69,13 +77,6 @@ namespace MultiplayerSnake.Client
                     Error.CurrentError = Errors.InvalidPassword;
                     Error.Print(true);
                 }
-            }
-            else
-            {
-                Error.CurrentError = Errors.Success;
-                Error.Print(true);
-                JwtToken = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
-                await SaveToken(JwtToken);
             }
         }
 
