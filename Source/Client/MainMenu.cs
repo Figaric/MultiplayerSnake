@@ -22,6 +22,7 @@ class MainMenu
     public ColorManager BoundColor;
     private string login, password;
     public Account UserAccount;
+    public NetSession Session;
 
     public MainMenu()
     {
@@ -30,10 +31,17 @@ class MainMenu
         SnakeColor = new ColorManager();
         BoundColor = new ColorManager();
         UserAccount = new Account();
+        Session = new NetSession(UserAccount);
+        Session.Connect().Wait();
         while (true)
         {
             DrawMainMenu();
         }
+    }
+
+    public void RenderLobby()
+    {
+
     }
 
     public void DrawMainMenu()
@@ -54,7 +62,7 @@ class MainMenu
             Console.ResetColor();
             Console.Write("\nВыберите одну из опций выше: ");
 
-            switch (Console.ReadKey(true).Key)
+            switch (Console.ReadKey(false).Key)
             {
                 case ConsoleKey.D1: // Single player
                     s = new Snake(20, SnakeColor, BoundColor);
@@ -64,25 +72,24 @@ class MainMenu
                     Console.Clear();
                     if (UserAccount.Logon)
                     {
-                        Console.WriteLine("\n\t\t1) Создать\n\t\t1) Присоедениться\n\n\t\tНазад - любая клавиша");
+                        Console.WriteLine("\n\t\t1) Создать\n\t\t2) Присоедениться\n\n\t\tНазад - любая клавиша");
                         switch (Console.ReadKey(true).Key)
                         {
                             case ConsoleKey.D1:
                                 Console.Clear();
-                                // lobby create request
+                                Session.HostLobbyRequest().GetAwaiter().GetResult();
+                                Console.ReadKey(true);
                                 break;
                             case ConsoleKey.D2:
                                 Console.Clear();
-                                Console.Write("\n\t\tВведите id лобби: ");
-                                string id = Console.ReadLine();
-                                // connect to lobby request
+                                Session.GetLobbiesRequest().Wait();
+                                Console.ReadKey(true);
                                 break;
                             default:
                                 break;
                         }
-                        
                     }
-                    else 
+                    else
                     {
                         Console.WriteLine("\n\t\tНеобходимо зарегистрироваться или войти в аккаунт!\n\t\tСделать это можно во вкладке \"Аккаунты\"\n\n\t\tНазад - любая клавиша");
                         Console.ReadKey(true);
@@ -199,7 +206,8 @@ class MainMenu
                                 password = Console.ReadLine();
 
                                 Console.Clear();
-                                UserAccount.Register(login, password).GetAwaiter();
+                                UserAccount.Register(login, password).Wait();
+                                Session.Connect().GetAwaiter().GetResult();
                                 Console.ReadKey(true);
                                 break;
                             case ConsoleKey.D2:
@@ -209,7 +217,8 @@ class MainMenu
                                 UserAccount.Error.MarkField(false);
                                 password = Console.ReadLine();
 
-                                UserAccount.Login(login, password).GetAwaiter();
+                                UserAccount.Login(login, password).Wait();
+                                Session.Connect().GetAwaiter().GetResult();
                                 Console.ReadKey(true);
                                 break;
                             default:

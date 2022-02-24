@@ -49,7 +49,7 @@ namespace MultiplayerSnake.Server
         {
             var rooms = _roomManager.GetRooms(page);
 
-            await Clients.Caller.SendAsync(HubMethods.RoomsReceived, rooms);
+            await Clients.Caller.SendAsync(HubMethods.RoomsReceived, rooms, page);
         }
 
         [HubMethodName(HubMethods.SendPos)]
