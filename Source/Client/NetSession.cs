@@ -37,7 +37,8 @@ namespace MultiplayerSnake.Client
                 await Connection.StartAsync();
 
                 Console.ForegroundColor = ConsoleColor.White;
-                while (Connection.State != HubConnectionState.Disconnected)
+                
+                while (Connection.State != HubConnectionState.Disconnected) //throws exception if server is offline
                 {
                     if (Connection.State == HubConnectionState.Connected)
                     {
@@ -48,7 +49,7 @@ namespace MultiplayerSnake.Client
                         return;
                     }
                 }
-                Console.BackgroundColor = ConsoleColor.Green;
+                Console.BackgroundColor = ConsoleColor.Red;
                 Console.WriteLine("\n\t\t» Не удаётся подключится к серверу!");
                 Console.ResetColor();
                 Thread.Sleep(500);

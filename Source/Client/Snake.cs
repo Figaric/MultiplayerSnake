@@ -29,6 +29,15 @@ class Snake
         Direction = 0;
         Map = new char[x, x];
         MapSize = (int)Math.Sqrt(Map.Length) - 1;
+        SParts = new List<Point>() { new Point((MapSize + 1) / 2, (MapSize + 1) / 2) };
+        FoodCoords = new List<Point>() { };
+        Score = 0;
+        Speed = 1;
+        Rnd = new Random();
+        IsAlive = true;
+        SnakeColor = s;
+        BoundColor = b;
+        Console.ForegroundColor = BoundColor.ReturnColor();
         for (int i = 0; i < MapSize; i++) // Generating map bounds
         {
             Console.SetCursorPosition(0, i);
@@ -42,14 +51,7 @@ class Snake
         }
         Console.SetCursorPosition(MapSize, MapSize);
         Console.Write("#");
-        SParts = new List<Point>() { new Point((MapSize + 1) / 2, (MapSize + 1) / 2) };
-        FoodCoords = new List<Point>() { };
-        Score = 0;
-        Speed = 1;
-        Rnd = new Random();
-        IsAlive = true;
-        SnakeColor = s;
-        BoundColor = b;
+        Console.ResetColor();
         Console.SetCursorPosition(0, 20);
         Console.WriteLine($"Score: {Score}");
     }
@@ -197,6 +199,7 @@ class Snake
     public void GameOver()
     {
         IsAlive = false;
+        Console.SetCursorPosition(0, 22);
         Console.WriteLine("GameOver");
         Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
     }
