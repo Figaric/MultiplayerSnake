@@ -27,7 +27,7 @@ namespace MultiplayerSnake.Client
                 Console.Clear();
                 Console.WriteLine("\n\tПодключение к серверу...");
                 Connection = new HubConnectionBuilder()
-                    .WithUrl("http://localhost:5000/hubs/gamehub", options =>
+                    .WithUrl($"{ApiEndpoints.Host}{ApiEndpoints.GameHubRoute}", options =>
                     {
                         options.AccessTokenProvider = () => Task.FromResult(UserAccount.JwtToken);
                     }).Build();

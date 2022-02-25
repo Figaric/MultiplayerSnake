@@ -31,7 +31,7 @@ namespace MultiplayerSnake.Client
 
         public async Task Register(string login, string password)
         {
-            RestClient client = new RestClient("http://localhost:5000/account/register/");
+            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.RegisterRoute}");
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
@@ -53,7 +53,7 @@ namespace MultiplayerSnake.Client
 
         public async Task Login(string login, string password)
         {
-            RestClient client = new RestClient("http://localhost:5000/account/login/");
+            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.LoginRoute}");
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
@@ -83,7 +83,7 @@ namespace MultiplayerSnake.Client
         public async Task SaveToken(string token)
         {
             FileStream f = File.Create(Path + "Jwt");
-            f.Write(Encoding.UTF8.GetBytes(token));
+            await f.WriteAsync(Encoding.UTF8.GetBytes(token));
             f.Close();
             Logon = true;
         }
@@ -105,7 +105,7 @@ namespace MultiplayerSnake.Client
             f.Close();
         }
 
-        public async Task Logout()
+        public void Logout()
         {
             File.Delete(Path + "Jwt");
             JwtToken = null;
