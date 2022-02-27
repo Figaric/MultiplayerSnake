@@ -31,7 +31,7 @@ namespace MultiplayerSnake.Client
 
         public async Task Register(string login, string password)
         {
-            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.RegisterRoute}");
+            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.AccountRoute}{ApiEndpoints.RegisterRoute}");
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
@@ -53,7 +53,7 @@ namespace MultiplayerSnake.Client
 
         public async Task Login(string login, string password)
         {
-            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.LoginRoute}");
+            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.AccountRoute}{ApiEndpoints.LoginRoute}");
             RestRequest request = new RestRequest().AddJsonBody(new { Username = login, Password = password });
             RestResponse response = await client.ExecutePostAsync(request);
 
