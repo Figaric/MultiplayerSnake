@@ -24,7 +24,7 @@ public class AccountController : ControllerBase
         _jwtSettings = jwtSettings;
     }
 
-    [HttpPost(ApiEndpoints.LoginRoute)]
+    [HttpPost("login/")]
     public async Task<IResponse> Login(UserLoginDto dto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
@@ -59,7 +59,7 @@ public class AccountController : ControllerBase
         });
     }
 
-    [HttpPost(ApiEndpoints.RegisterRoute)]
+    [HttpPost("register/")]
     public async Task<IResponse> RegisterAsync(UserRegisterDto dto)
     {
         string hashedPassword = Argon2.Hash(dto.Password);

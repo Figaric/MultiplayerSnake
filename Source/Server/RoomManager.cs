@@ -11,13 +11,31 @@ namespace MultiplayerSnake.Server
             Rooms = new List<Room>();
         }
 
-        public async void CreateRoom(string roomId, string hostName)
+        public Room GetRoom(string roomId)
+        {
+            var room = Rooms.FirstOrDefault(r => r.Id == roomId);
+
+            if (room == null)
+                throw new NullReferenceException("Room not found");
+
+            return room;
+        }
+
+        public void CreateRoom(string roomId, string hostName)
         {
             Room room = new Room
             {
                 Id = roomId,
                 HostName = hostName,
             };
+        }
+
+        public void AddToRoom(string roomId, string username)
+        {
+            var room = GetRoom(roomId);
+
+            room.UserNames.ToList()
+                .Add(username);
         }
 
         public IEnumerable<Room> GetRooms(int page)
