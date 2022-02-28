@@ -39,9 +39,13 @@ namespace MultiplayerSnake.Server
         [HubMethodName(HubMethods.JoinRoom)]
         public async Task JoinRoom(string roomId)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            var room = _roomManager.GetRoom(roomId);
 
-            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.RoomJoined, Context.User.Identity.Name);
+            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+            _roomManager.AddToRoom(roomId, Context.User.Identity.Name);
+
+            await Clients.Caller.SendAsync(HubMethods.RoomJoined, room.UserNames);
+            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.RoomJoined, new List<string> { Context.User.Identity.Name });
         }
 
         [HubMethodName(HubMethods.GetRooms)]

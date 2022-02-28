@@ -2,7 +2,7 @@
 
 public static class ApiEndpoints
 {
-    public const string Host = "http://localhost:5000/";
+    public const string Host = "http://25.68.131.140:3624/";
 
     public const string GameHubRoute = "hubs/gamehub/";
 
@@ -10,9 +10,9 @@ public static class ApiEndpoints
 
     public const string AccountRoute = "account/";
 
-    public const string RegisterRoute = "account/register/";
+    public const string RegisterRoute = "register/";
 
-    public const string LoginRoute = "account/login/";
+    public const string LoginRoute = "login/";
 
     #endregion
 }
