@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Isopoh.Cryptography.Argon2;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
@@ -22,6 +23,13 @@ public class AccountController : ControllerBase
         _context = context;
         _mapper = mapper;
         _jwtSettings = jwtSettings;
+    }
+
+    [Authorize]
+    [HttpGet("/me")]
+    public async Task<IResponse> Me()
+    {
+        return ResponseData<string>.Succeed(HttpContext.User.Identity.Name);
     }
 
     [HttpPost("login/")]

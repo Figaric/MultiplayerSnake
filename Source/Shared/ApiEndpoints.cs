@@ -8,6 +8,8 @@ public static class ApiEndpoints
 
     #region Account
 
+    public const string MeRoute = "me/";
+
     public const string AccountRoute = "account/";
 
     public const string RegisterRoute = "register/";
