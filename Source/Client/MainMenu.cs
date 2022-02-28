@@ -65,7 +65,7 @@ class MainMenu
             switch (Console.ReadKey(false).Key)
             {
                 case ConsoleKey.D1: // Single player
-                    s = new Snake(20, SnakeColor, BoundColor);
+                    s = new Snake(16, SnakeColor, BoundColor);
                     IsAlive = true;
                     break;
                 case ConsoleKey.D2: // Multiplayer
@@ -75,12 +75,12 @@ class MainMenu
                         Console.WriteLine("\n\t\t1) Создать\n\t\t2) Присоедениться\n\n\t\tНазад - любая клавиша");
                         switch (Console.ReadKey(true).Key)
                         {
-                            case ConsoleKey.D1:
+                            case ConsoleKey.D1: // Create lobby
                                 Console.Clear();
                                 Session.HostLobbyRequest().GetAwaiter().GetResult();
                                 Console.ReadKey(true);
                                 break;
-                            case ConsoleKey.D2:
+                            case ConsoleKey.D2: // Join lobby
                                 Console.Clear();
                                 Session.GetLobbiesRequest().Wait();
                                 Console.ReadKey(true);
@@ -102,17 +102,17 @@ class MainMenu
                         Console.WriteLine("\n\t\t1) Настройки\n\t\t2) Статистика\n\t\t3) Выйти из аккаунта\n\n\t\tНазад - любая клавиша");
                         switch (Console.ReadKey(true).Key)
                         {
-                            case ConsoleKey.D1:
+                            case ConsoleKey.D1: // Settings
                                 Console.Clear();
                                 Console.WriteLine("\n\t\t1) Выбор цвета\n\t\t2) Сброс\n\n\t\tНазад - любая клавиша"); // TODO clear data
                                 switch (Console.ReadKey(true).Key)
                                 {
-                                    case ConsoleKey.D1:
+                                    case ConsoleKey.D1: // Color selection
                                         Console.Clear();
                                         Console.WriteLine("\n\t\t1) Цвет змейки\n\t\t2) Цвет границ\n\n\t\tНазад - любая клавиша");
                                         switch (Console.ReadKey(true).Key)
                                         {
-                                            case ConsoleKey.D1:
+                                            case ConsoleKey.D1: // Color of snake
                                                 Console.Clear();
                                                 Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\t\t6) Радуга\n\n\t\tНазад - любая клавиша");
                                                 switch (Console.ReadKey(true).Key)
@@ -139,7 +139,7 @@ class MainMenu
                                                         break;
                                                 }
                                                 break;
-                                            case ConsoleKey.D2:
+                                            case ConsoleKey.D2: // Color of bounds
                                                 Console.Clear();
                                                 Console.WriteLine("\n\t\t1) Белый\n\t\t2) Красный\n\t\t3) Зелёный\n\t\t4) Голубой\n\t\t5) Маджента\n\n\t\tНазад - любая клавиша");
                                                 switch (Console.ReadKey(true).Key)
@@ -171,7 +171,7 @@ class MainMenu
                                         break;
                                 }
                                 break;
-                            case ConsoleKey.D2:
+                            case ConsoleKey.D2: // Statistics
                                 Console.Clear();
                                 Console.WriteLine("\n\t\tИгр сыграно:             stat" +
                                     "\n\t\tМаксимальный счёт:       stat" +
@@ -184,7 +184,7 @@ class MainMenu
                                     "\n\n\t\tНазад - любая клавиша");
                                 Console.ReadKey(false);
                                 break;
-                            case ConsoleKey.D3:
+                            case ConsoleKey.D3: // Logout
                                 Console.Clear();
                                 UserAccount.Logout();
                                 Console.ReadKey(true);
@@ -198,7 +198,7 @@ class MainMenu
                         Console.WriteLine("\n\t\t1) Зарегистрироваться\n\t\t2) Войти\n\n\t\tНазад - любая клавиша");
                         switch (Console.ReadKey(true).Key)
                         {
-                            case ConsoleKey.D1:
+                            case ConsoleKey.D1: // Registration
                                 Console.Clear();
                                 UserAccount.Error.MarkField(true);
                                 login = Console.ReadLine();
@@ -210,7 +210,7 @@ class MainMenu
                                 Session.Connect().GetAwaiter().GetResult();
                                 Console.ReadKey(true);
                                 break;
-                            case ConsoleKey.D2:
+                            case ConsoleKey.D2: // Login
                                 Console.Clear();
                                 UserAccount.Error.MarkField(true);
                                 login = Console.ReadLine();
