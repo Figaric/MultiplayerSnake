@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.SignalR.Client;
 using MultiplayerSnake.Shared;
 using System;
-using System.Collections;
 using System.Linq;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using RestSharp;
 
 namespace MultiplayerSnake.Client
 {
@@ -13,7 +13,6 @@ namespace MultiplayerSnake.Client
     {
         public Account UserAccount { get; set; }
         public HubConnection Connection { get; private set; }
-        public Room room { get; private set; }
 
         public NetSession(Account userAccount)
         {
@@ -25,35 +24,45 @@ namespace MultiplayerSnake.Client
             if (UserAccount.Logon)
             {
                 Console.Clear();
-                Console.WriteLine("\n\tПодключение к серверу...");
-                Connection = new HubConnectionBuilder()
-                    .WithUrl($"{ApiEndpoints.Host}{ApiEndpoints.GameHubRoute}", options =>
-                    {
-                        options.AccessTokenProvider = () => Task.FromResult(UserAccount.JwtToken);
-                    }).Build();
-
-                ConfigureListeners();
-
-                await Connection.StartAsync();
-
                 Console.ForegroundColor = ConsoleColor.White;
-                
-                while (Connection.State != HubConnectionState.Disconnected) //throws exception if server is offline
+                Console.WriteLine("\n\tПодключение к серверу...");
+                var testClient = new RestClient($"{ApiEndpoints.Host}");
+                var testRequest = new RestRequest();
+                testRequest.Timeout = 1000;
+                var testResponse = await testClient.ExecuteGetAsync(testRequest);
+                if (testResponse.IsSuccessful)
                 {
-                    if (Connection.State == HubConnectionState.Connected)
+                    Connection = new HubConnectionBuilder()
+                        .WithUrl($"{ApiEndpoints.Host}{ApiEndpoints.GameHubRoute}", options =>
+                        {
+                            options.AccessTokenProvider = () => Task.FromResult(UserAccount.JwtToken);
+                        }).Build();
+
+                    ConfigureListeners();
+
+                    await Connection.StartAsync();
+
+                    while (true)
                     {
-                        Console.BackgroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\n\t\t» Успешно подключен!");
-                        Console.ResetColor();
-                        Thread.Sleep(500);
-                        return;
+                        if (Connection.State == HubConnectionState.Connected)
+                        {
+                            Console.Write("\n\t\t» ");
+                            Console.BackgroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Успешно подключен!");
+                            Console.ResetColor();
+                            Thread.Sleep(500);
+                            break;
+                        }
                     }
                 }
-                Console.BackgroundColor = ConsoleColor.Red;
-                Console.WriteLine("\n\t\t» Не удаётся подключится к серверу!");
-                Console.ResetColor();
-                Thread.Sleep(500);
-                return;
+                else
+                {
+                    Console.Write("\n\t\t» ");
+                    Console.BackgroundColor = ConsoleColor.Red;
+                    Console.WriteLine("Не удаётся подключится к серверу!");
+                    Console.ResetColor();
+                    Thread.Sleep(500);
+                }
             }
             else
             {

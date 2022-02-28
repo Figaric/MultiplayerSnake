@@ -52,7 +52,7 @@ class Snake
         Console.SetCursorPosition(MapSize, MapSize);
         Console.Write("#");
         Console.ResetColor();
-        Console.SetCursorPosition(0, 20);
+        Console.SetCursorPosition(0, MapSize+1);
         Console.WriteLine($"Score: {Score}");
     }
     #endregion
@@ -85,7 +85,7 @@ class Snake
             }
             Console.Write("\n");
         }
-        Console.SetCursorPosition(7, 20);
+        Console.SetCursorPosition(7, MapSize+1);
         Console.WriteLine(Score);
     }
     public void Update()
@@ -199,7 +199,7 @@ class Snake
     public void GameOver()
     {
         IsAlive = false;
-        Console.SetCursorPosition(0, 22);
+        Console.SetCursorPosition(0, MapSize+2);
         Console.WriteLine("GameOver");
         Console.WriteLine("Нажмите на Q, чтобы выйти в главное меню");
     }
