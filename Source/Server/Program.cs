@@ -26,9 +26,9 @@ builder.Services.AddDatabase();
 // Register jwt authenticators
 builder.Services.AddJwtAuthentication();
 
-builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
+builder.Services.AddSingleton<RedisService>();
 
-builder.Services.AddScoped<RoomManager>();
+builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 #endregion
 

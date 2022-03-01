@@ -18,21 +18,28 @@ public class AccountController : ControllerBase
 
     private readonly IOptions<JwtSettings> _jwtSettings;
 
-    public AccountController(ApplicationDbContext context, IMapper mapper, IOptions<JwtSettings> jwtSettings)
+    private readonly RedisService _redisService;
+
+    public AccountController(
+        ApplicationDbContext context, 
+        IMapper mapper, 
+        IOptions<JwtSettings> jwtSettings,
+        RedisService redisService)
     {
         _context = context;
         _mapper = mapper;
         _jwtSettings = jwtSettings;
+        _redisService = redisService;
     }
 
     [Authorize]
-    [HttpGet("/me")]
+    [HttpGet(ApiEndpoints.MeRoute)]
     public async Task<IResponse> Me()
     {
         return ResponseData<string>.Succeed(HttpContext.User.Identity.Name);
     }
 
-    [HttpPost("login/")]
+    [HttpPost(ApiEndpoints.LoginRoute)]
     public async Task<IResponse> Login(UserLoginDto dto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
@@ -67,7 +74,7 @@ public class AccountController : ControllerBase
         });
     }
 
-    [HttpPost("register/")]
+    [HttpPost(ApiEndpoints.RegisterRoute)]
     public async Task<IResponse> RegisterAsync(UserRegisterDto dto)
     {
         string hashedPassword = Argon2.Hash(dto.Password);
@@ -92,6 +99,26 @@ public class AccountController : ControllerBase
                 });
             }
         }
+
+        return ResponseBase.Succeed();
+    }
+
+    [HttpPost(ApiEndpoints.ForgotPasswordRoute)]
+    public async Task<IResponse> ForgotPasswordAsync(UserForgotPasswordDto dto)
+    {
+        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
+
+        if(user == null)
+        {
+            // Do that for security purposes
+            Thread.Sleep(2000);
+
+            return ResponseBase.Succeed();
+        }
+
+        var token = await _redisService.GenerateForgotPasswordTokenAsync(user.Id);
+
+        // TODO: send email to the user
 
         return ResponseBase.Succeed();
     }

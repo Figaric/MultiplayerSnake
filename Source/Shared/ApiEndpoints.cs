@@ -16,5 +16,7 @@ public static class ApiEndpoints
 
     public const string LoginRoute = "login/";
 
+    public const string ForgotPasswordRoute = "forgotPassword/";
+
     #endregion
 }

@@ -12,16 +12,10 @@ namespace MultiplayerSnake.Shared
 
         public const string JoinRoom = "JoinRoom";
 
-        public const string RoomCreated = "RoomCreated";
-
-        public const string RoomJoined = "RoomJoined";
-
         public const string GetRooms = "GetRooms";
-
-        public const string RoomsReceived = "RoomsReceived";
 
         public const string SendPos = "SendPosition";
 
-        public const string PosSent = "PositionSent";
+        public const string LeaveRoom = "LeaveRoom";
     }
 }

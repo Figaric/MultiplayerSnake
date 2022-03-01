@@ -13,3 +13,10 @@ public class UserLoginDto
 
     public string Password { get; set; }
 }
+
+public class UserForgotPasswordDto
+{
+    public string UserName { get; set; }
+
+    public string Email { get; set; }
+}
