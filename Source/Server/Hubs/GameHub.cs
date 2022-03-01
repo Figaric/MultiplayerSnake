@@ -1,65 +1,68 @@
-﻿using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using MultiplayerSnake.Shared;
 
-namespace MultiplayerSnake.Server
+namespace MultiplayerSnake.Server;
+
+[Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+public class GameHub : Hub
 {
-    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
-    public class GameHub : Hub
+    private readonly ILogger<GameHub> _logger;
+
+    private readonly RoomManager _roomManager;
+
+    public GameHub(ILogger<GameHub> logger, RoomManager roomManager)
     {
-        private readonly ILogger<GameHub> _logger;
+        _logger = logger;
+        _roomManager = roomManager;
+    }
 
-        private readonly RoomManager _roomManager;
+    public override Task OnConnectedAsync()
+    {
+        _logger.LogInformation("New connection: " + Context.User.Identity.Name);
 
-        public GameHub(ILogger<GameHub> logger, RoomManager roomManager)
-        {
-            _logger = logger;
-            _roomManager = roomManager;
-        }
+        return base.OnConnectedAsync();
+    }
 
-        public override Task OnConnectedAsync()
-        {
-            _logger.LogInformation("New connection: " + Context.User.Identity.Name);
+    [HubMethodName(HubMethods.CreateRoom)]
+    public async Task CreateRoom()
+    {
+        string roomId = Guid.NewGuid().ToString();
 
-            return base.OnConnectedAsync();
-        }
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+        _roomManager.AddToRoom(roomId, Context.User.Identity.Name);
 
-        [HubMethodName(HubMethods.CreateRoom)]
-        public async Task CreateRoom()
-        {
-            string roomId = Guid.NewGuid().ToString();
+        await Clients.Caller.SendAsync(HubMethods.CreateRoom, roomId);
+    }
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            _roomManager.CreateRoom(roomId, Context.User.Identity.Name);
+    [HubMethodName(HubMethods.JoinRoom)]
+    public async Task JoinRoom(string roomId)
+    {
+        await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
+        var room = _roomManager.AddToRoom(roomId, Context.User.Identity.Name);
 
-            await Clients.Caller.SendAsync(HubMethods.RoomCreated, roomId);
-        }
+        // Send responses
+        // Send group member names to the joined user
+        // Send the joined users name to others in the group
+        await Clients.Caller.SendAsync(HubMethods.JoinRoom, room.Players.Select(p => p.Nickname));
+        await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.JoinRoom, new List<string> { Context.User.Identity.Name });
+    }
 
-        [HubMethodName(HubMethods.JoinRoom)]
-        public async Task JoinRoom(string roomId)
-        {
-            var room = _roomManager.GetRoom(roomId);
+    [HubMethodName(HubMethods.GetRooms)]
+    public async Task GetRooms()
+    {
+        var rooms = _roomManager.GetRooms();
 
-            await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-            _roomManager.AddToRoom(roomId, Context.User.Identity.Name);
+        await Clients.Caller.SendAsync(HubMethods.GetRooms, rooms);
+    }
 
-            await Clients.Caller.SendAsync(HubMethods.RoomJoined, room.UserNames);
-            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.RoomJoined, new List<string> { Context.User.Identity.Name });
-        }
+    [HubMethodName(HubMethods.LeaveRoom)]
+    public async Task LeaveRoom(string roomId)
+    {
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
+        var room = _roomManager.LeaveRoom(roomId, Context.User.Identity.Name);
 
-        [HubMethodName(HubMethods.GetRooms)]
-        public async Task GetRooms(int page)
-        {
-            var rooms = _roomManager.GetRooms(page);
-
-            await Clients.Caller.SendAsync(HubMethods.RoomsReceived, rooms, page);
-        }
-
-        [HubMethodName(HubMethods.SendPos)]
-        public async Task SendPos(string roomId, SnakeBase pos)
-        {
-            await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.PosSent, pos);
-        }
+        await Clients.Group(roomId).SendAsync(HubMethods.LeaveRoom, room.Players);
     }
 }
