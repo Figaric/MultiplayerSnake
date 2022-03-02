@@ -11,6 +11,7 @@ namespace MultiplayerSnake.Shared
         public string Nickname { get; set; }
 
         public bool IsHost { get; set; }
+        public bool IsReady { get; set; }
 
         // In-Game props
         public IList<Point> SParts { get; set; }
