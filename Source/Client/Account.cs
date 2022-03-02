@@ -63,6 +63,7 @@ namespace MultiplayerSnake.Client
                 Error.Print(true);
                 JwtToken = JsonConvert.DeserializeObject<ResponseData<LoginResponseData>>(response.Content).Data.JwtToken;
                 await SaveToken(JwtToken);
+                await GetAccountData();
             }
             else
             {
@@ -115,6 +116,15 @@ namespace MultiplayerSnake.Client
             Console.WriteLine("\n\t\tВы успешно вышли из аккаунта");
             Console.ResetColor();
             Console.WriteLine("\n\t\tДалее - любая клавиша");
+        }
+
+        public async Task GetAccountData()
+        {
+            RestClient client = new RestClient($"{ApiEndpoints.Host}{ApiEndpoints.AccountRoute}{ApiEndpoints.MeRoute}");
+            RestRequest request = new RestRequest();
+            RestResponse response = await client.ExecuteGetAsync(request);
+
+            Nickname = response.Content;
         }
     }
 }
