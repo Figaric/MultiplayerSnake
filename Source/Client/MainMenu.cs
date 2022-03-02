@@ -41,7 +41,7 @@ class MainMenu
 
     public void RenderLobby()
     {
-
+        
     }
 
     public void DrawMainMenu()
@@ -177,10 +177,10 @@ class MainMenu
                                     "\n\t\tМаксимальный счёт:       stat" +
                                     "\n\t\tВсего съедено:           stat" +
                                     "\n\t\tОбщий размер змейки:     stat" +
-                                    "\n\n\t\tПобед в мултиплеере:     stat" +
-                                    "\n\t\tПоражений в мултиплеере: stat" +
+                                    "\n\n\t\tПобед в мультиплеере:     stat" +
+                                    "\n\t\tПоражений в мультиплеере: stat" +
                                     "\n\t\tВинрейт:                 stat" +
-                                    "\n\n\t\t1) Достижения" +
+                                    "\n\n\t\t1) Достижения (Не робiт пока что)" +
                                     "\n\n\t\tНазад - любая клавиша");
                                 Console.ReadKey(false);
                                 break;
