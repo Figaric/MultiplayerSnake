@@ -13,7 +13,7 @@ namespace MultiplayerSnake.Client
     {
         public Account UserAccount { get; set; }
         public HubConnection Connection { get; private set; }
-
+        public LobbyManager LobbyManager { get; set; }
         public NetSession(Account userAccount)
         {
             UserAccount = userAccount;
@@ -80,22 +80,40 @@ namespace MultiplayerSnake.Client
         {
             await Connection.InvokeAsync(HubMethods.JoinRoom, roomId);
         }
-
         public async Task GetLobbiesRequest(int page = 0)
         {
             await Connection.InvokeAsync(HubMethods.GetRooms, page);
         }
+        public async Task ChangeReadyStateRequest(bool state)
+        {
+            await Connection.InvokeAsync(HubMethods.GetRooms, LobbyManager.Room.Id, state);
+        }
 
         public void ConfigureListeners()
         {
-            Connection.On<IEnumerable<Room>, int>(HubMethods.RoomsReceived, (rooms, page) =>
+            Connection.On<IList<Player>, string>(HubMethods.JoinRoom, (players, roomId) =>
+            {
+                if (LobbyManager is null)
+                {
+                    LobbyManager = new LobbyManager(new Room()
+                    {
+                        Id = roomId,
+                        Players = players
+                    }, Connection);
+                }
+                else
+                {
+                    LobbyManager.Room.Players.Add(players[0]);
+                }
+                LobbyManager.Draw();
+            });
+
+            Connection.On<IList<Room>, int>(HubMethods.GetRooms, (rooms, page) =>
             {
                 Console.WriteLine("\n\tДоступные лобби:\n");
-                IList<Room> lrooms = rooms.ToArray();
-                for (int i = 0; i < lrooms.Count() - 1; i++)
+                for (int i = 0; i < rooms.Count() - 1; i++)
                 {
-                    Console.WriteLine($"\t{i + 1}) {lrooms[i].HostName}\t\t{lrooms[i].Id}");
-
+                    Console.WriteLine($"\t{i + 1}) {rooms[i].Players.FirstOrDefault(p => p.IsHost).Nickname}\t\t{rooms[i].Players.Count}/5");
                 }
                 if (page > 0)
                 {
@@ -106,7 +124,7 @@ namespace MultiplayerSnake.Client
                 {
                     Console.Write($"\n\tСтраница {page}");
                 }
-                if (lrooms.Count() == 5)
+                if (rooms.Count() == 5)
                 {
                     Console.Write($"\t\t>>");
                 }
@@ -114,33 +132,33 @@ namespace MultiplayerSnake.Client
                 switch (Console.ReadKey(true).Key)
                 {
                     case ConsoleKey.D1:
-                        if (lrooms.Count() > 0)
+                        if (rooms.Count() > 0)
                         {
-                            JoinLobbyRequest(lrooms[0].Id).GetAwaiter();
+                            JoinLobbyRequest(rooms[0].Id).GetAwaiter();
                         }
                         break;
                     case ConsoleKey.D2:
-                        if (lrooms.Count() > 1)
+                        if (rooms.Count() > 1)
                         {
-                            JoinLobbyRequest(lrooms[1].Id).GetAwaiter();
+                            JoinLobbyRequest(rooms[1].Id).GetAwaiter();
                         }
                         break;
                     case ConsoleKey.D3:
-                        if (lrooms.Count() > 2)
+                        if (rooms.Count() > 2)
                         {
-                            JoinLobbyRequest(lrooms[2].Id).GetAwaiter();
+                            JoinLobbyRequest(rooms[2].Id).GetAwaiter();
                         }
                         break;
                     case ConsoleKey.D4:
-                        if (lrooms.Count() > 3)
+                        if (rooms.Count() > 3)
                         {
-                            JoinLobbyRequest(lrooms[3].Id).GetAwaiter();
+                            JoinLobbyRequest(rooms[3].Id).GetAwaiter();
                         }
                         break;
                     case ConsoleKey.D5:
-                        if (lrooms.Count() > 4)
+                        if (rooms.Count() > 4)
                         {
-                            JoinLobbyRequest(lrooms[4].Id).GetAwaiter();
+                            JoinLobbyRequest(rooms[4].Id).GetAwaiter();
                         }
                         break;
                     case ConsoleKey.LeftArrow:
@@ -150,7 +168,7 @@ namespace MultiplayerSnake.Client
                         }
                         break;
                     case ConsoleKey.RightArrow:
-                        if (lrooms.Count() == 5)
+                        if (rooms.Count() == 5)
                         {
                             GetLobbiesRequest(page + 1).GetAwaiter().GetResult();
                         }
@@ -160,9 +178,39 @@ namespace MultiplayerSnake.Client
                 }
             });
 
-            Connection.On<string>(HubMethods.RoomCreated, roomId =>
+            Connection.On<bool, string>(HubMethods.ChangeReadyState, (state, name) =>
             {
-                Console.WriteLine(roomId);
+                LobbyManager.Room.Players.FirstOrDefault(p => p.Nickname == name).IsReady = state;
+                LobbyManager.Draw();
+            });
+
+            Connection.On<string>(HubMethods.LeaveRoom, name =>
+            {
+                if (name is null)
+                {
+                    LobbyManager = null;
+                }
+                else
+                {
+                    var left = LobbyManager.Room.Players.FirstOrDefault(p => p.Nickname == name);
+                    LobbyManager.Room.Players.Remove(left);
+                    LobbyManager.Draw();
+                }
+            });
+
+            Connection.On<string>(HubMethods.CreateRoom, roomId =>
+            {
+                LobbyManager = new LobbyManager(new Room()
+                {
+                    Id = roomId,
+                    Players = new List<Player>() { 
+                        new Player() { 
+                            Nickname = UserAccount.Nickname, 
+                            IsHost = true 
+                        } 
+                    }
+                }, Connection);
+                LobbyManager.Draw();
             });
         }
 
