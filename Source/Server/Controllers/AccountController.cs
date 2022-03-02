@@ -66,8 +66,6 @@ public class AccountController : ControllerBase
                 });
         }
 
-        // TODO: Generate Jwt token
-
         return ResponseData<LoginResponseData>.Succeed(new LoginResponseData
         {
             JwtToken = Utillities.GenerateJwtToken(user, _jwtSettings.Value) 
@@ -103,23 +101,23 @@ public class AccountController : ControllerBase
         return ResponseBase.Succeed();
     }
 
-    [HttpPost(ApiEndpoints.ForgotPasswordRoute)]
-    public async Task<IResponse> ForgotPasswordAsync(UserForgotPasswordDto dto)
-    {
-        var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
+    // [HttpPost(ApiEndpoints.ForgotPasswordRoute)]
+    // public async Task<IResponse> ForgotPasswordAsync(UserForgotPasswordDto dto)
+    // {
+    //     var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == dto.UserName);
 
-        if(user == null)
-        {
-            // Do that for security purposes
-            Thread.Sleep(2000);
+    //     if(user == null)
+    //     {
+    //         // Do that for security purposes
+    //         Thread.Sleep(2000);
 
-            return ResponseBase.Succeed();
-        }
+    //         return ResponseBase.Succeed();
+    //     }
 
-        var token = await _redisService.GenerateForgotPasswordTokenAsync(user.Id);
+    //     var token = await _redisService.GenerateForgotPasswordTokenAsync(user.Id);
 
-        // TODO: send email to the user
+    //     // TODO: send email to the user
 
-        return ResponseBase.Succeed();
-    }
+    //     return ResponseBase.Succeed();
+    // }
 }

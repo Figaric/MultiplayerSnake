@@ -65,4 +65,12 @@ public class GameHub : Hub
 
         await Clients.Group(roomId).SendAsync(HubMethods.LeaveRoom, room.Players);
     }
+
+    [HubMethodName(HubMethods.ChangeReadyState)]
+    public async Task ChangeReadyState(string roomId, bool readyState)
+    {
+        _roomManager.ChangeReadyState(roomId, readyState);
+
+        await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.ChangeReadyState, readyState, Context.User.Identity.Name);
+    }
 }
