@@ -2,6 +2,8 @@
 using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
+using System.Net.Mail;
+using System.Net;
 
 namespace MultiplayerSnake.Server
 {
@@ -28,6 +30,27 @@ namespace MultiplayerSnake.Server
             {
                 appBuilder.UseMiddleware<TMiddleware>();
             });
+        }
+
+        public static void SendEmail(string htmlBody)
+        {
+            var message = new MailMessage();
+            var smtpClient = new SmtpClient();
+
+            message.From = new MailAddress("");
+            message.To.Add(new MailAddress(""));
+
+            message.Subject = "Change password";
+            message.IsBodyHtml = true;
+            message.Body = htmlBody;
+
+            smtpClient.Port = 587;  
+            smtpClient.Host = "smtp.gmail.com"; //for gmail host  
+            smtpClient.EnableSsl = true;  
+            smtpClient.UseDefaultCredentials = false;  
+            smtpClient.Credentials = new NetworkCredential("FromMailAddress", "password");
+            smtpClient.DeliveryMethod = SmtpDeliveryMethod.Network;  
+            smtpClient.Send(message); 
         }
 
         public static string GenerateJwtToken(User user, JwtSettings jwtSettings)

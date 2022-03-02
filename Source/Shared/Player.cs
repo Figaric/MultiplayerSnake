@@ -9,7 +9,7 @@ namespace MultiplayerSnake.Shared
     public class Player
     {
         public string Nickname { get; set; }
-        public bool IsReady { get; set; }
+
         public bool IsHost { get; set; }
 
         // In-Game props

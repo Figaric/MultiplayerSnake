@@ -12,6 +12,13 @@ public class RoomManager
         _rooms = new List<Room>();
     }
 
+    public void ChangeReadyState(string roomId, bool readyState)
+    {
+        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+
+        room.CountOfReadyPlayers += (readyState ? 1 : -1);
+    }
+
     public IList<Room> GetRooms()
     {
         return _rooms;

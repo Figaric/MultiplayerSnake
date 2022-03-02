@@ -8,20 +8,22 @@ var connection = new HubConnectionBuilder()
     })
     .Build();
 
+connection.On<string>(HubMethods.CreateRoom, roomId => Console.WriteLine("RoomId: " + roomId));
+
+connection.On<IList<Player>>(HubMethods.JoinRoom, players => 
+{
+    players.ToList()
+        .ForEach(p => Console.WriteLine(p.Nickname));
+});
+
+connection.On<IList<Player>>(HubMethods.LeaveRoom, players => 
+{
+    players.ToList()
+        .ForEach(p => Console.WriteLine(p.Nickname));
+});
+
 await connection.StartAsync();
 
-connection.On<IList<Room>>(HubMethods.RoomsReceived, rooms =>
-{
-    rooms.ToList().ForEach(r => Console.WriteLine(r.Id));
-});
 
-connection.On<string>(HubMethods.RoomCreated, roomId =>
-{
-    Console.WriteLine("RoomId: " + roomId);
-});
-
-await connection.InvokeAsync(HubMethods.CreateRoom);
-
-await connection.InvokeAsync(HubMethods.GetRooms, 0);
 
 Console.ReadKey();
