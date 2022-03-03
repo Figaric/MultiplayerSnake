@@ -26,43 +26,34 @@ namespace MultiplayerSnake.Client
                 Console.Clear();
                 Console.ForegroundColor = ConsoleColor.White;
                 Console.WriteLine("\n\tПодключение к серверу...");
-                var testClient = new RestClient($"{ApiEndpoints.Host}");
-                var testRequest = new RestRequest();
-                testRequest.Timeout = 1000;
-                var testResponse = await testClient.ExecuteGetAsync(testRequest);
-                if (testResponse.IsSuccessful)
-                {
-                    Connection = new HubConnectionBuilder()
-                        .WithUrl($"{ApiEndpoints.Host}{ApiEndpoints.GameHubRoute}", options =>
-                        {
-                            options.AccessTokenProvider = () => Task.FromResult(UserAccount.JwtToken);
-                        }).Build();
-
-                    ConfigureListeners();
-
-                    await Connection.StartAsync();
-
-                    while (true)
+                Connection = new HubConnectionBuilder()
+                    .WithUrl($"{ApiEndpoints.Host}{ApiEndpoints.GameHubRoute}", options =>
                     {
-                        if (Connection.State == HubConnectionState.Connected)
-                        {
-                            Console.Write("\n\t\t» ");
-                            Console.BackgroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Успешно подключен!");
-                            Console.ResetColor();
-                            Thread.Sleep(500);
-                            break;
-                        }
+                        options.AccessTokenProvider = () => Task.FromResult(UserAccount.JwtToken);
+                    }).Build();
+
+                ConfigureListeners();
+
+                await Connection.StartAsync();
+
+                while (Connection.State != HubConnectionState.Disconnected)
+                {
+                    if (Connection.State == HubConnectionState.Connected)
+                    {
+                        Console.Write("\n\t\t» ");
+                        Console.BackgroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Успешно подключен!");
+                        Console.ResetColor();
+                        Thread.Sleep(500);
+                        return;
                     }
                 }
-                else
-                {
-                    Console.Write("\n\t\t» ");
-                    Console.BackgroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Не удаётся подключится к серверу!");
-                    Console.ResetColor();
-                    Thread.Sleep(500);
-                }
+                Console.Write("\n\t\t» ");
+                Console.BackgroundColor = ConsoleColor.Red;
+                Console.WriteLine("Не удаётся подключится к серверу!");
+                Console.ResetColor();
+                Thread.Sleep(500);
+                return;
             }
             else
             {
@@ -203,11 +194,11 @@ namespace MultiplayerSnake.Client
                 LobbyManager = new LobbyManager(new Room()
                 {
                     Id = roomId,
-                    Players = new List<Player>() { 
-                        new Player() { 
-                            Nickname = UserAccount.Nickname, 
-                            IsHost = true 
-                        } 
+                    Players = new List<Player>() {
+                        new Player() {
+                            Nickname = UserAccount.Nickname,
+                            IsHost = true
+                        }
                     }
                 }, Connection);
                 LobbyManager.Draw();
