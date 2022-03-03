@@ -45,8 +45,8 @@ public class GameHub : Hub
         // Send responses
         // Send group member names to the joined user
         // Send the joined users name to others in the group
-        await Clients.Caller.SendAsync(HubMethods.JoinRoom, room.Players.Select(p => p.Nickname));
-        await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.JoinRoom, new List<string> { Context.User.Identity.Name });
+        await Clients.Caller.SendAsync(HubMethods.JoinRoom, room.Players);
+        await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.JoinRoom, new List<Player> { (room.Players.FirstOrDefault(p => p.Nickname == Context.User.Identity.Name)) });
     }
 
     [HubMethodName(HubMethods.GetRooms)]
@@ -63,7 +63,8 @@ public class GameHub : Hub
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, roomId);
         var room = _roomManager.LeaveRoom(roomId, Context.User.Identity.Name);
 
-        await Clients.Group(roomId).SendAsync(HubMethods.LeaveRoom, room.Players);
+        await Clients.Caller.SendAsync(HubMethods.LeaveRoom, null);
+        await Clients.Group(roomId).SendAsync(HubMethods.LeaveRoom, Context.User.Identity.Name);
     }
 
     [HubMethodName(HubMethods.ChangeReadyState)]
@@ -72,5 +73,12 @@ public class GameHub : Hub
         _roomManager.ChangeReadyState(roomId, readyState);
 
         await Clients.GroupExcept(roomId, Context.ConnectionId).SendAsync(HubMethods.ChangeReadyState, readyState, Context.User.Identity.Name);
+    }
+
+    public async Task SendPos(int x, int y, char sprite, int color)
+    {
+        _logger.LogInformation("New pos was sent");
+
+        await Clients.AllExcept(Context.ConnectionId).SendAsync("SendPos", x, y, sprite, color);
     }
 }

@@ -28,6 +28,8 @@ builder.Services.AddJwtAuthentication();
 
 builder.Services.AddSingleton<RedisService>();
 
+builder.Services.AddSingleton<RoomManager>();
+
 builder.Services.AddAutoMapper(Assembly.GetExecutingAssembly());
 
 #endregion
