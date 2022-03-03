@@ -19,5 +19,7 @@ namespace MultiplayerSnake.Shared
         public const string LeaveRoom = "LeaveRoom";
 
         public const string ChangeReadyState = "ChangeReadyState";
+
+        public const string StartGame = "StartGame";
     }
 }

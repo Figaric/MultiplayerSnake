@@ -12,6 +12,23 @@ public class RoomManager
         _rooms = new List<Room>();
     }
 
+    public bool RunGame(string roomId)
+    {
+        var room = _rooms.FirstOrDefault(r => r.Id == roomId);
+
+        if(room == null)
+        {
+            throw new NullReferenceException("Room not found");
+        }
+
+        if(room.CountOfReadyPlayers != room.Players.Count())
+        {
+            return false;
+        }
+
+        return true;
+    }
+
     public void ChangeReadyState(string roomId, bool readyState)
     {
         var room = _rooms.FirstOrDefault(r => r.Id == roomId);

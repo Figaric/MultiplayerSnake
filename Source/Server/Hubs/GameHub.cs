@@ -81,4 +81,15 @@ public class GameHub : Hub
 
         await Clients.AllExcept(Context.ConnectionId).SendAsync("SendPos", x, y, sprite, color);
     }
+
+    [HubMethodName(HubMethods.StartGame)]
+    public async Task StartGame(string roomId)
+    {
+        var isStarted = _roomManager.RunGame(roomId);
+
+        if(!isStarted)
+            await Clients.Caller.SendAsync(HubMethods.StartGame, isStarted);
+
+        await Clients.Group(roomId).SendAsync(HubMethods.StartGame, isStarted);
+    }
 }
