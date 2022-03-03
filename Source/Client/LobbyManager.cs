@@ -19,7 +19,7 @@ public class LobbyManager
     public void Draw()
     {
         Console.Clear();
-        Console.WriteLine($"\n\tLobby of {Room.Players.FirstOrDefault(h => h.IsHost)}\n");
+        Console.WriteLine($"\n\tLobby of {Room.Players.FirstOrDefault(h => h.IsHost).Nickname}\n");
         for (int i = 0; i < Room.Players.Count - 1; i++)
         {
             Console.Write($"\t\t{i + 1}.\t{Room.Players[i].Nickname}\n\n");

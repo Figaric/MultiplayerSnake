@@ -2,7 +2,7 @@
 
 public static class ApiEndpoints
 {
-    public const string Host = "http://25.95.92.255:3624/";
+    public const string Host = "http://25.47.141.242:3624/";
 
     public const string GameHubRoute = "hubs/gamehub/";
 
