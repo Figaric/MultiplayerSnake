@@ -31,7 +31,7 @@ public class GameHub : Hub
         string roomId = Guid.NewGuid().ToString();
 
         await Groups.AddToGroupAsync(Context.ConnectionId, roomId);
-        _roomManager.AddToRoom(roomId, Context.User.Identity.Name);
+        _roomManager.AddToRoom(roomId, Context.User.Identity.Name, true);
 
         await Clients.Caller.SendAsync(HubMethods.CreateRoom, roomId);
     }
