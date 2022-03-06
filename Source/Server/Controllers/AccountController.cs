@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Isopoh.Cryptography.Argon2;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ public class AccountController : ControllerBase
         _redisService = redisService;
     }
 
-    [Authorize]
+    [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
     [HttpGet(ApiEndpoints.MeRoute)]
     public async Task<IResponse> Me()
     {
