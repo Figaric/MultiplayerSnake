@@ -9,10 +9,10 @@ namespace MultiplayerSnake.Server;
 
 public static class ServiceExtensions
 {
-    public static void AddLogging(this WebApplicationBuilder builder)
+    public static void AddCustomLogging(this WebApplicationBuilder builder)
     {
-        //builder.Host.ConfigureLogging(logging =>
-        //{
+        // builder.Host.ConfigureLogging(logging =>
+        // {
         //    logging.AddConfiguration(builder.Configuration);
         //    logging.AddConsole();
 
@@ -20,7 +20,7 @@ public static class ServiceExtensions
         //    logging.AddFilter("Microsoft.EntityFrameworkCore.Database.Command", LogLevel.Information);
         //    logging.AddFilter("Microsoft.EntityFrameworkCore.Update", LogLevel.None);
         //    logging.AddFilter("Microsoft.AspNetCore.Diagnostics.ExceptionHandlerMiddleware", LogLevel.None);
-        //});
+        // });
     }
 
     public static void AddControllersWithFilters(this IServiceCollection services)
@@ -30,7 +30,7 @@ public static class ServiceExtensions
 
     public static void AddValidation(this IServiceCollection services)
     {
-        services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>();
+        services.AddValidatorsFromAssemblyContaining<UserRegisterDtoValidator>(ServiceLifetime.Transient);
         services.AddTransient<IValidationManager, ValidationManager>();
     }
 

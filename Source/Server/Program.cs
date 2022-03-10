@@ -1,15 +1,15 @@
 using MultiplayerSnake.Server;
 using System.Reflection;
 using Microsoft.AspNetCore.SignalR;
+using MultiplayerSnake.Shared;
 
 var builder = WebApplication.CreateBuilder(args);
 
 #region Configure services
 
-builder.Services.AddSignalR();
+builder.AddCustomLogging();
 
-// Add custom logging configuration
-builder.AddLogging();
+builder.Services.AddSignalR();
 
 // Map jwt settings from appsettings.json to the JwtSettings object
 builder.Services.Configure<JwtSettings>(builder.Configuration.GetSection(nameof(JwtSettings)));
@@ -38,6 +38,8 @@ var app = builder.Build();
 
 #region Configure middlewares
 
+app.UseConditionalMiddleware<ValidationMiddleware>("account");
+app.UseMiddleware<LoggingMiddleware>();
 app.UseAuthorization();
 app.MapControllers();
 app.MapHub<GameHub>("/hubs/gamehub");
