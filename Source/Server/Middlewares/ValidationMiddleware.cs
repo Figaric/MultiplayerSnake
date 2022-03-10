@@ -1,6 +1,7 @@
 ﻿using MultiplayerSnake.Shared;
 using Newtonsoft.Json;
 using System.Net;
+using System.Reflection;
 
 namespace MultiplayerSnake.Server;
 
@@ -18,14 +19,23 @@ public class ValidationMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        UserRegisterDto dto;
+        string controllerName = context.GetRouteData().Values["controller"] + "Controller";
+        string actionName = context.GetRouteData().Values["action"] + "Async";
+        
+        var assembly = Assembly.GetAssembly(typeof(Program));
+
+        var parameters = assembly.GetType(assembly.GetName().Name + '.' + controllerName)
+            .GetMethod(actionName)
+            .GetParameters();
+
+        Type dtoType = parameters[0].ParameterType;
+
+        var dto = assembly.CreateInstance(dtoType.Name);
 
         string body = await Utillities.ReadRequestBodyAsync(context.Request);
-        dto = JsonConvert.DeserializeObject<UserRegisterDto>(body);
+        dto = JsonConvert.DeserializeObject(body, dtoType);
 
-        context.Items["RegisterDto"] = dto;
-
-        var result = await _validationManager.ValidateAsync(dto);
+        var result = await _validationManager.ValidateAsync(dto, dtoType);
 
         if (!result.IsValid)
         {
